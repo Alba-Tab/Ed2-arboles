@@ -5,6 +5,7 @@ public class NodoBinario <K,V>{
     private V valor;
     private NodoBinario<K,V> hijoDerecho;
     private NodoBinario<K,V> hijoIzquierdo;
+
     public NodoBinario(){
     }
     public NodoBinario(K clave, V valor) {
@@ -43,20 +44,23 @@ public class NodoBinario <K,V>{
     }
 
     public static NodoBinario nodoVacio(){
+
         return null;
     }
     public static boolean esNodoVacio(NodoBinario unNodo){
+
         return unNodo ==NodoBinario.nodoVacio();
     }
     public boolean esVacioHijoIzquierdo(){
+
         return NodoBinario.esNodoVacio(this.getHijoIzquierdo());
     }
     public boolean esVacioHijoDerecho(){
+
         return NodoBinario.esNodoVacio(this.getHijoDerecho());
     }
     public boolean esHoja(){
         return this.esVacioHijoDerecho() &&
                 this.esVacioHijoIzquierdo();
     }
-
 }
