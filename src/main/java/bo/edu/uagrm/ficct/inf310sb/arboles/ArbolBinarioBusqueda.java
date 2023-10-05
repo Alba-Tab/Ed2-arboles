@@ -6,6 +6,7 @@ import java.util.*;
 public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         IArbolBusqueda<K,V> {
     protected NodoBinario<K,V> raiz;
+    public ArbolBinarioBusqueda(){}
 
     public ArbolBinarioBusqueda(List<K> clavesInOrden,List<V> valoresInOrden,
                                 List<K> clavesNoInOrden,List<V> valoresNoInOrden,
@@ -19,11 +20,15 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
     }
 
     private NodoBinario<K,V> reconstruirConPreOrden(List<K> clavesInOrden,List<V> valoresInOrden){
+        NodoBinario<K,V> nodoActual= new NodoBinario<>();
 
+        return nodoActual;
     }
 
     private NodoBinario<K,V> reconstruirConPostOrden(List<K> clavesNoInOrden,List<V> valoresNoInOrden){
+        NodoBinario<K,V> nodoActual= new NodoBinario<>();
 
+        return nodoActual;
     }
 
     @Override
@@ -105,7 +110,7 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
     @Override
     public void vaciar() {
 
-        this.raiz=(NodoBinario<K, V>) NodoBinario.nodoVacio();
+        this.raiz=(NodoBinario<K,V>) NodoBinario.nodoVacio();
     }
 
     @Override
@@ -120,9 +125,24 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
 
     @Override
     public List<K> recorridoEnInOrden() {
-    return null;
+        List<K> recorrido = new LinkedList<>();
+        recorridoEnInOrden(raiz,recorrido);
+        return recorrido;
     }
 
+    private List<K> recorridoEnInOrden(NodoBinario<K,V> nodoActual,List<K> recorrido){
+        if (!NodoBinario.esNodoVacio(nodoActual)){
+            if (!nodoActual.esVacioHijoIzquierdo()){
+                recorridoEnInOrden(nodoActual.getHijoIzquierdo(),recorrido);
+            }
+            recorrido.add(nodoActual.getClave());
+            if (!nodoActual.esVacioHijoDerecho()){
+                recorridoEnInOrden(nodoActual.getHijoDerecho(),recorrido);
+                recorrido.add(nodoActual.getClave());
+            }
+        }
+        return recorrido;
+    }
     @Override
     public List<K> recorridoEnPreOrden() {
         List<K> recorrido=new ArrayList<>();
@@ -162,34 +182,34 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         List<K> recorrido=new ArrayList<>();
         if (!esArbolVacio()) {
             Stack<NodoBinario<K,V>> pilaDeNodos = new Stack<>();
-            NodoBinario<K,V> nodoActual = pilaDeNodos.peek();
-            recorridoEnPostOrden(nodoActual,pilaDeNodos);
-            do{
-                while (!nodoActual.esHoja()){
-                    if(!nodoActual.esVacioHijoIzquierdo()){
-                        nodoActual=nodoActual.getHijoIzquierdo();
-                        pilaDeNodos.push(nodoActual);
-                    } else if (!nodoActual.esVacioHijoDerecho()){
-                        nodoActual=nodoActual.getHijoDerecho();
-                        pilaDeNodos.push(nodoActual);
+            NodoBinario<K,V> nodoActual = this.raiz;
+            meterPilaParaPostOrden(nodoActual,pilaDeNodos);
+            //iterando sobre la pila
+            while(!pilaDeNodos.isEmpty()){
+                nodoActual=pilaDeNodos.pop();
+                recorrido.add(nodoActual.getClave());
+                if (pilaDeNodos.isEmpty()){
+                    NodoBinario<K,V> nodoTope=pilaDeNodos.peek();
+                    if (!nodoTope.esVacioHijoDerecho() &&
+                            nodoTope.getHijoDerecho()!=nodoActual){
+                        //volvemos a hacer el bucle inicial
+                        meterPilaParaPostOrden(nodoActual,pilaDeNodos);
                     }
                 }
-                nodoActual=pilaDeNodos.pop();
-                NodoBinario<K,V> nodoTope = pilaDeNodos.peek();
-                if ((!nodoTope.esVacioHijoDerecho()) &&
-                        nodoTope!=nodoActual){
-                    nodoActual=nodoTope.getHijoDerecho();
-                }
-            }while(!pilaDeNodos.isEmpty());
+            }
         }
         return recorrido;
     }
 
-    private static<K extends Comparable<K>, V> void recorridoEnPostOrden
-            (NodoBinario<K,V> nodoActual,Stack<> pilaDeNodos){
+    private static<K extends Comparable<K>, V> void meterPilaParaPostOrden
+            (NodoBinario<K,V> nodoActual,Stack<NodoBinario<K,V>> pilaDeNodos){
         while(!NodoBinario.esNodoVacio(nodoActual)){
             pilaDeNodos.push(nodoActual);
-
+            if (!nodoActual.esVacioHijoIzquierdo()){
+                nodoActual=nodoActual.getHijoIzquierdo();
+            }else {
+                nodoActual=nodoActual.getHijoDerecho();
+            }
         }
     }
     @Override
