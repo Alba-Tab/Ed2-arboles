@@ -59,7 +59,7 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
             }while (!NodoBinario.esNodoVacio(nodoActual));
 
             NodoBinario<K,V> nuevoNodo = new NodoBinario<>(claveAInsertar, valorAsociado);
-            if (nodoAnterior.getClave().compareTo(claveAInsertar)<0){
+            if (nodoAnterior.getClave().compareTo(claveAInsertar)>0){
                 nodoAnterior.setHijoIzquierdo(nuevoNodo);
             } else{
                 nodoAnterior.setHijoDerecho(nuevoNodo);
@@ -138,7 +138,7 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
             recorrido.add(nodoActual.getClave());
             if (!nodoActual.esVacioHijoDerecho()){
                 recorridoEnInOrden(nodoActual.getHijoDerecho(),recorrido);
-                recorrido.add(nodoActual.getClave());
+                //recorrido.add(nodoActual.getClave());
             }
         }
         return recorrido;
@@ -185,17 +185,9 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
             NodoBinario<K,V> nodoActual = this.raiz;
             meterPilaParaPostOrden(nodoActual,pilaDeNodos);
             //iterando sobre la pila
-            while(!pilaDeNodos.isEmpty()){
-                nodoActual=pilaDeNodos.pop();
+            while (!pilaDeNodos.isEmpty()) {
+                nodoActual = pilaDeNodos.pop();
                 recorrido.add(nodoActual.getClave());
-                if (pilaDeNodos.isEmpty()){
-                    NodoBinario<K,V> nodoTope=pilaDeNodos.peek();
-                    if (!nodoTope.esVacioHijoDerecho() &&
-                            nodoTope.getHijoDerecho()!=nodoActual){
-                        //volvemos a hacer el bucle inicial
-                        meterPilaParaPostOrden(nodoActual,pilaDeNodos);
-                    }
-                }
             }
         }
         return recorrido;
@@ -203,13 +195,10 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
 
     private static<K extends Comparable<K>, V> void meterPilaParaPostOrden
             (NodoBinario<K,V> nodoActual,Stack<NodoBinario<K,V>> pilaDeNodos){
-        while(!NodoBinario.esNodoVacio(nodoActual)){
+        if (!NodoBinario.esNodoVacio(nodoActual)) {
             pilaDeNodos.push(nodoActual);
-            if (!nodoActual.esVacioHijoIzquierdo()){
-                nodoActual=nodoActual.getHijoIzquierdo();
-            }else {
-                nodoActual=nodoActual.getHijoDerecho();
-            }
+            meterPilaParaPostOrden(nodoActual.getHijoDerecho(), pilaDeNodos);
+            meterPilaParaPostOrden(nodoActual.getHijoIzquierdo(), pilaDeNodos);
         }
     }
     @Override
