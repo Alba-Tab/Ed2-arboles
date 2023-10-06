@@ -72,13 +72,55 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
        if (clave == null){
            throw new IllegalArgumentException("Clave no puede ser nula");
        }
-
-       if (this.esArbolVacio()){
-           return null;
+       V valorARetornar = this.buscar(clave);
+       if (valorARetornar==null){
+           throw new ClaveNoExisteExcepcion();
        }
-        return null;
+       this.raiz= eliminar(raiz,clave);
+       return valorARetornar;
     }
-
+    private NodoBinario<K,V> eliminar(NodoBinario<K,V> nodoActual,K claveAEliminar){
+        K claveDelNodoActual=nodoActual.getClave();
+        if (claveAEliminar.compareTo(claveDelNodoActual)<0){
+            NodoBinario<K,V> supuestoHijoIzquierdo =
+                    eliminar(nodoActual.getHijoIzquierdo(),claveAEliminar);
+            nodoActual.setHijoIzquierdo(supuestoHijoIzquierdo);
+            return nodoActual;
+        }
+        if (claveAEliminar.compareTo(claveAEliminar)>0){
+            NodoBinario<K,V> supuestoHijoDerecho=
+                    eliminar(nodoActual.getHijoDerecho(),claveAEliminar);
+            nodoActual.setHijoDerecho(supuestoHijoDerecho);
+            return nodoActual;
+        }
+        //caso 1
+        if(nodoActual.esHoja()){
+            return NodoBinario.nodoVacio();
+        }
+        //caso 2
+        if (!nodoActual.esVacioHijoIzquierdo() && nodoActual.esVacioHijoDerecho()){
+            return nodoActual.getHijoIzquierdo();
+        }
+        if (!nodoActual.esVacioHijoDerecho() && nodoActual.esVacioHijoIzquierdo()){
+            return  nodoActual.getHijoDerecho();
+        }
+        //caso 3
+                                        //recibe el de la derecha y se mueve a puro izquierda
+        NodoBinario<K,V> nodoDelSucesor =this.getSucesor(nodoActual.getHijoDerecho());
+        NodoBinario<K,V> supuestoHijoDerecho =this.eliminar(nodoActual.getHijoDerecho(),
+                                                            nodoDelSucesor.getClave());
+        nodoDelSucesor.setClave(nodoDelSucesor.getClave());
+        nodoDelSucesor.setValor(nodoDelSucesor.getValor());
+        return nodoActual;
+    }
+    protected NodoBinario<K,V> getSucesor(NodoBinario<K,V> nodoActual){
+    //while
+        // nodo=hijoizquierdo
+        if(!nodoActual.esVacioHijoIzquierdo()){
+            nodoActual= getSucesor(nodoActual.getHijoIzquierdo());
+        }
+        return nodoActual;
+    }
     @Override
     public V buscar(K clave) {
         return null;
@@ -104,7 +146,17 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
     }
     @Override
     public int altura() {
-        return 0;
+        return altura(raiz);
+    }
+
+    private int altura(NodoBinario<K,V> nodoActual){
+        if (NodoBinario.esNodoVacio(nodoActual)){
+            return 0;
+        }
+        int alturaXIzq=altura(nodoActual.getHijoIzquierdo());
+        int alturaXDer=altura(nodoActual.getHijoDerecho());
+        return alturaXIzq>alturaXDer? alturaXIzq+1:alturaXDer+1;
+
     }
 
     @Override
