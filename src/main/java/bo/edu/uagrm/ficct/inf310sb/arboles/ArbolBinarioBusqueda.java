@@ -128,6 +128,17 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
 
     @Override
     public boolean contiene(K clave) {
+        if (!esArbolVacio()){
+            NodoBinario<K,V> nodoActual = this.raiz;
+            while (!NodoBinario.esNodoVacio(nodoActual)){
+                K claveActual = nodoActual.getClave();
+                if (claveActual.compareTo(clave)>0){
+                    nodoActual=nodoActual.getHijoIzquierdo();
+                }else if (claveActual.compareTo(clave)<0){
+                    nodoActual=nodoActual.getHijoDerecho();
+                } else return true;
+            }
+        };
         return false;
     }
 
@@ -172,7 +183,41 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
 
     @Override
     public int nivel() {
-        return 0;
+        if(this.altura()==0){
+            return 0;
+        }
+        return this.altura()-1;
+    }
+    //un metodo que retorna la cantidad de hijos izquierdos no vacio que tiene
+    public int cantHijosIzquierdoNoVacios(){
+            return cantHijosIzquierdoNoVacios(raiz);
+    }
+    private int cantHijosIzquierdoNoVacios (NodoBinario<K,V> nodoActual){
+        int cantidad=0;
+        if (!NodoBinario.esNodoVacio(nodoActual)){
+            if (!nodoActual.esVacioHijoIzquierdo()){
+                cantidad=cantHijosIzquierdoNoVacios(nodoActual.getHijoIzquierdo())+1;
+            }
+            if (!nodoActual.esVacioHijoDerecho()){
+                cantidad+=cantHijosIzquierdoNoVacios(nodoActual.getHijoDerecho());
+            }
+        }
+        return cantidad;
+    }
+    //cantidad hijo izquierso en el nivel n
+    public int hijosEnNivelN(int n){
+        return hijosEnNivelN(n,raiz);
+    }
+    private int hijosEnNivelN(int n,NodoBinario<K,V> nodoActual){
+        if (NodoBinario.esNodoVacio(nodoActual)|| (n<0)){
+            return 0;
+        }
+        int c = hijosEnNivelN(n-1,nodoActual.getHijoDerecho())+
+                hijosEnNivelN(n-1,nodoActual.getHijoDerecho());
+        if ((!nodoActual.esVacioHijoIzquierdo())&&(n==0)){
+            c++;
+        }
+        return c;
     }
 
     @Override

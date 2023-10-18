@@ -20,7 +20,7 @@ public class PruebasArbol {
         System.out.println("Recorrido en postOrden \n"+arbolPrueba.recorridoEnPostOrden());
         System.out.println("Recorrido en preOrden \n"+arbolPrueba.recorridoEnPreOrden());
         System.out.println("Recorrido por niveles \n"+arbolPrueba.recorridoPorNiveles());
-
+      //  System.out.println("Cantidad de hijos Izquierdo no vacios: "+ arbolPrueba.);
 
 
 
