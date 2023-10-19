@@ -13,21 +13,68 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
                                 boolean conPreOrden){
         //con preorden true
         if (conPreOrden){
-            this.raiz=reconstruirConPreOrden(clavesInOrden,valoresInOrden);
+            this.raiz=reconstruirConPreOrden(clavesInOrden, valoresInOrden,
+                                            clavesNoInOrden, valoresNoInOrden);
         }else {
-            this.raiz=reconstruirConPostOrden(clavesNoInOrden, valoresNoInOrden);
+            this.raiz=reconstruirConPostOrden(clavesInOrden, valoresInOrden,
+                                            clavesNoInOrden, valoresNoInOrden);
         }
     }
 
-    private NodoBinario<K,V> reconstruirConPreOrden(List<K> clavesInOrden,List<V> valoresInOrden){
+    private NodoBinario<K,V> reconstruirConPreOrden(List<K> clavesInOrden,List<V> valoresInOrden,
+                                                    List<K> clavesPreOrden,List<V> valoresPreOrden){
+        if (clavesInOrden.isEmpty()){
+            return NodoBinario.nodoVacio();
+        }
         NodoBinario<K,V> nodoActual= new NodoBinario<>();
+        int tamañoLista= clavesInOrden.size();
+        int posicionRaiz=0;
+        while (clavesPreOrden.getFirst() != clavesInOrden.get(posicionRaiz)) {
+            posicionRaiz++;
+        }
+        nodoActual.setClave(clavesPreOrden.getFirst());
+        nodoActual.setValor(valoresPreOrden.getFirst());
+        nodoActual.setHijoIzquierdo(reconstruirConPostOrden(
+                clavesInOrden.subList(0,posicionRaiz-1),
+                valoresInOrden.subList(0,posicionRaiz-1),
+                clavesPreOrden.subList(1,posicionRaiz),
+                valoresPreOrden.subList(1,posicionRaiz)        )
+        );
+        nodoActual.setHijoDerecho(reconstruirConPostOrden(
+                clavesInOrden.subList(posicionRaiz+1,tamañoLista),
+                valoresInOrden.subList(posicionRaiz+1,tamañoLista),
+                clavesPreOrden.subList(posicionRaiz+1,tamañoLista),
+                valoresPreOrden.subList(posicionRaiz+1,tamañoLista)        )
+        );
 
         return nodoActual;
     }
 
-    private NodoBinario<K,V> reconstruirConPostOrden(List<K> clavesNoInOrden,List<V> valoresNoInOrden){
+    private NodoBinario<K,V> reconstruirConPostOrden(List<K> clavesInOrden,List<V> valoresInOrden,
+                                                     List<K> clavesPostOrden,List<V> valoresPostOrden){
+        if (clavesInOrden.isEmpty()){
+            return NodoBinario.nodoVacio();
+        }
         NodoBinario<K,V> nodoActual= new NodoBinario<>();
-
+        int tamañoLista= clavesInOrden.size();
+        int posicionRaiz=0;
+        while (clavesPostOrden.getLast() != clavesInOrden.get(posicionRaiz)) {
+            posicionRaiz++;
+        }
+        nodoActual.setClave(clavesPostOrden.getLast());
+        nodoActual.setValor(valoresPostOrden.getLast());
+        nodoActual.setHijoIzquierdo(reconstruirConPostOrden(
+                clavesInOrden.subList(0,posicionRaiz-1),
+                valoresInOrden.subList(0,posicionRaiz-1),
+                clavesPostOrden.subList(0,posicionRaiz-1),
+                valoresPostOrden.subList(0,posicionRaiz-1)        )
+                );
+        nodoActual.setHijoDerecho(reconstruirConPostOrden(
+                clavesInOrden.subList(posicionRaiz+1,tamañoLista),
+                valoresInOrden.subList(posicionRaiz+1,tamañoLista),
+                clavesPostOrden.subList(posicionRaiz,tamañoLista-1),
+                valoresPostOrden.subList(posicionRaiz,tamañoLista-1)        )
+        );
         return nodoActual;
     }
 
@@ -123,6 +170,15 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
     }
     @Override
     public V buscar(K clave) {
+        NodoBinario<K,V> nodoActual = raiz;
+        while ( !NodoBinario.esNodoVacio(nodoActual)){
+            K claveNodoActual = nodoActual.getClave();
+            if (clave.compareTo(claveNodoActual)>0){
+                nodoActual=nodoActual.getHijoDerecho();
+            } else if (clave.compareTo(claveNodoActual)<0){
+                nodoActual=nodoActual.getHijoIzquierdo();
+            } else return nodoActual.getValor();
+        }
         return null;
     }
 

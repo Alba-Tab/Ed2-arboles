@@ -15,17 +15,22 @@ public class AVL <K extends Comparable<K>,V>
         }
         super.raiz=insertar(super.raiz,claveAInsertar,valorAsociado);
     }
-    private NodoBinario<K,V> insertar(NodoBinario<K,V> nodoActual,K claveAInsertar,V valorAsociado){
+    private NodoBinario<K,V> insertar(NodoBinario nodoActual,K claveAInsertar,V valorAsociado){
         if (NodoBinario.esNodoVacio(nodoActual)){
             NodoBinario<K,V> nodoNuevo = new NodoBinario<K,V>(claveAInsertar,valorAsociado);
             return nodoNuevo;
         }
-        K claveDelNodoActual =nodoActual.getClave();
+        K claveDelNodoActual =(K) nodoActual.getClave();
         if (claveAInsertar.compareTo(claveDelNodoActual)<0){
             NodoBinario<K,V> supuestoNuevoHijoIzquierdo = insertar(nodoActual.getHijoIzquierdo(),claveAInsertar,valorAsociado);
             nodoActual.setHijoIzquierdo(supuestoNuevoHijoIzquierdo);
-            return balancear(nodoActual);
+           // return balancear(nodoActual);
         }
-        if
+        if (claveAInsertar.compareTo(claveDelNodoActual)>=0){
+            NodoBinario<K,V> supuestoNodoHijoDerecho = insertar(nodoActual.getHijoDerecho(),claveAInsertar,valorAsociado);
+            nodoActual.setHijoDerecho(supuestoNodoHijoDerecho);
+          //  return balancear(nodoActual);
+        }
+        return nodoActual;
     }
 }
