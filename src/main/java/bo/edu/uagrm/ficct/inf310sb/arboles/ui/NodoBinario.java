@@ -1,4 +1,4 @@
-package bo.edu.uagrm.ficct.inf310sb.arboles;
+package bo.edu.uagrm.ficct.inf310sb.arboles.ui;
 
 public class NodoBinario <K,V>{
     private K clave;

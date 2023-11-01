@@ -1,6 +1,7 @@
-package bo.edu.uagrm.ficct.inf310sb.arboles;
+package bo.edu.uagrm.ficct.inf310sb.arboles.ui;
 
-import java.sql.ClientInfoStatus;
+import bo.edu.uagrm.ficct.inf310sb.arboles.excepciones.ClaveNoExisteExcepcion;
+
 import java.util.*;
 
 public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
@@ -23,24 +24,27 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
 
     private NodoBinario<K,V> reconstruirConPreOrden(List<K> clavesInOrden,List<V> valoresInOrden,
                                                     List<K> clavesPreOrden,List<V> valoresPreOrden){
-        if (clavesInOrden.isEmpty()){
+       if (clavesInOrden.isEmpty()){
             return NodoBinario.nodoVacio();
         }
         NodoBinario<K,V> nodoActual= new NodoBinario<>();
         int tamañoLista= clavesInOrden.size();
         int posicionRaiz=0;
-        while (clavesPreOrden.getFirst() != clavesInOrden.get(posicionRaiz)) {
+        K claveRaiz = clavesPreOrden.get(0);
+        K posibleRaiz = clavesInOrden.get(posicionRaiz);
+        while ( claveRaiz.compareTo(posibleRaiz)!=0 ) {
             posicionRaiz++;
+            posibleRaiz = clavesInOrden.get(posicionRaiz);
         }
-        nodoActual.setClave(clavesPreOrden.getFirst());
-        nodoActual.setValor(valoresPreOrden.getFirst());
-        nodoActual.setHijoIzquierdo(reconstruirConPostOrden(
-                clavesInOrden.subList(0,posicionRaiz-1),
-                valoresInOrden.subList(0,posicionRaiz-1),
-                clavesPreOrden.subList(1,posicionRaiz),
-                valoresPreOrden.subList(1,posicionRaiz)        )
+        nodoActual.setClave(clavesPreOrden.get(0));
+        nodoActual.setValor(valoresPreOrden.get(0));
+        nodoActual.setHijoIzquierdo(reconstruirConPreOrden(
+                clavesInOrden.subList(0,posicionRaiz),
+                valoresInOrden.subList(0,posicionRaiz),
+                clavesPreOrden.subList(1,posicionRaiz+1),
+                valoresPreOrden.subList(1,posicionRaiz+1)        )
         );
-        nodoActual.setHijoDerecho(reconstruirConPostOrden(
+        nodoActual.setHijoDerecho(reconstruirConPreOrden(
                 clavesInOrden.subList(posicionRaiz+1,tamañoLista),
                 valoresInOrden.subList(posicionRaiz+1,tamañoLista),
                 clavesPreOrden.subList(posicionRaiz+1,tamañoLista),
@@ -52,22 +56,25 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
 
     private NodoBinario<K,V> reconstruirConPostOrden(List<K> clavesInOrden,List<V> valoresInOrden,
                                                      List<K> clavesPostOrden,List<V> valoresPostOrden){
-        if (clavesInOrden.isEmpty()){
+       if (clavesInOrden.isEmpty()){
             return NodoBinario.nodoVacio();
         }
         NodoBinario<K,V> nodoActual= new NodoBinario<>();
         int tamañoLista= clavesInOrden.size();
         int posicionRaiz=0;
-        while (clavesPostOrden.getLast() != clavesInOrden.get(posicionRaiz)) {
+        K claveRaiz = clavesPostOrden.get(tamañoLista-1);
+        K posibleRaiz = clavesInOrden.get(posicionRaiz);
+        while ( claveRaiz.compareTo(posibleRaiz)!=0 ) {
             posicionRaiz++;
+            posibleRaiz = clavesInOrden.get(posicionRaiz);
         }
-        nodoActual.setClave(clavesPostOrden.getLast());
-        nodoActual.setValor(valoresPostOrden.getLast());
+        nodoActual.setClave(clavesPostOrden.get(tamañoLista-1));
+        nodoActual.setValor(valoresPostOrden.get(tamañoLista-1));
         nodoActual.setHijoIzquierdo(reconstruirConPostOrden(
-                clavesInOrden.subList(0,posicionRaiz-1),
-                valoresInOrden.subList(0,posicionRaiz-1),
-                clavesPostOrden.subList(0,posicionRaiz-1),
-                valoresPostOrden.subList(0,posicionRaiz-1)        )
+                clavesInOrden.subList(0,posicionRaiz),
+                valoresInOrden.subList(0,posicionRaiz),
+                clavesPostOrden.subList(0,posicionRaiz),
+                valoresPostOrden.subList(0,posicionRaiz)        )
                 );
         nodoActual.setHijoDerecho(reconstruirConPostOrden(
                 clavesInOrden.subList(posicionRaiz+1,tamañoLista),
@@ -216,7 +223,7 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         return altura(raiz);
     }
 
-    private int altura(NodoBinario<K,V> nodoActual){
+    protected int altura(NodoBinario<K,V> nodoActual){
         if (NodoBinario.esNodoVacio(nodoActual)){
             return 0;
         }
@@ -229,7 +236,7 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
     @Override
     public void vaciar() {
 
-        this.raiz=(NodoBinario<K,V>) NodoBinario.nodoVacio();
+        this.raiz= NodoBinario.nodoVacio();
     }
 
     @Override
@@ -296,6 +303,25 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         }
         return recorrido;
     }
+    public List<V> recorridoEnInOrdenValores() {
+        List<V> recorrido = new LinkedList<>();
+        recorridoEnInOrdenValores(raiz,recorrido);
+        return recorrido;
+    }
+
+    private List<V> recorridoEnInOrdenValores(NodoBinario<K,V> nodoActual,List<V> recorrido){
+        if (!NodoBinario.esNodoVacio(nodoActual)){
+            if (!nodoActual.esVacioHijoIzquierdo()){
+                recorridoEnInOrdenValores(nodoActual.getHijoIzquierdo(),recorrido);
+            }
+            recorrido.add(nodoActual.getValor());
+            if (!nodoActual.esVacioHijoDerecho()){
+                recorridoEnInOrdenValores(nodoActual.getHijoDerecho(),recorrido);
+                //recorrido.add(nodoActual.getClave());
+            }
+        }
+        return recorrido;
+    }
     @Override
     public List<K> recorridoEnPreOrden() {
         List<K> recorrido=new ArrayList<>();
@@ -317,16 +343,16 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         return recorrido;
     }
 
-    public List<K> recorridoEnPreOrdenV2(){
-        List<K> recorrido= new LinkedList<>();
-        recorridoEnPreOrdenV2(raiz,recorrido);
+    public List<V> recorridoEnPreOrdenValores(){
+        List<V> recorrido= new LinkedList<>();
+        recorridoEnPreOrdenValores(raiz,recorrido);
         return recorrido;
     }
-    public void recorridoEnPreOrdenV2(NodoBinario<K,V> nodoActual,List<K> recorrido){
+    public void recorridoEnPreOrdenValores(NodoBinario<K,V> nodoActual,List<V> recorrido){
         if (!NodoBinario.esNodoVacio(nodoActual)){
-            recorrido.add(nodoActual.getClave());
-            recorridoEnPreOrdenV2(nodoActual.getHijoDerecho(),recorrido);
-            recorridoEnPreOrdenV2(nodoActual.getHijoIzquierdo(),recorrido);
+            recorrido.add(nodoActual.getValor());
+            recorridoEnPreOrdenValores(nodoActual.getHijoDerecho(),recorrido);
+            recorridoEnPreOrdenValores(nodoActual.getHijoIzquierdo(),recorrido);
         }
     }
 
@@ -353,6 +379,21 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
             meterPilaParaPostOrden(nodoActual.getHijoDerecho(), pilaDeNodos);
             meterPilaParaPostOrden(nodoActual.getHijoIzquierdo(), pilaDeNodos);
         }
+    }
+
+    public List<V> recorridoEnPostOrdenValores() {
+        List<V> recorrido=new ArrayList<>();
+        if (!esArbolVacio()) {
+            Stack<NodoBinario<K,V>> pilaDeNodos = new Stack<>();
+            NodoBinario<K,V> nodoActual = this.raiz;
+            meterPilaParaPostOrden(nodoActual,pilaDeNodos);
+            //iterando sobre la pila
+            while (!pilaDeNodos.isEmpty()) {
+                nodoActual = pilaDeNodos.pop();
+                recorrido.add(nodoActual.getValor());
+            }
+        }
+        return recorrido;
     }
     @Override
     public List<K> recorridoPorNiveles() {

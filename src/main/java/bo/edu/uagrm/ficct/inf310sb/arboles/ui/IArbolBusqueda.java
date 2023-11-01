@@ -1,4 +1,6 @@
-package bo.edu.uagrm.ficct.inf310sb.arboles;
+package bo.edu.uagrm.ficct.inf310sb.arboles.ui;
+import bo.edu.uagrm.ficct.inf310sb.arboles.excepciones.ClaveNoExisteExcepcion;
+
 import java.util.List;
 public interface IArbolBusqueda <K extends Comparable<K>, V> {
     void insertar(K clave, V valor) ;
