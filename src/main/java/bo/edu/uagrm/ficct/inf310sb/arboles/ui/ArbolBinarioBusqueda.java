@@ -415,4 +415,83 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         }
         return recorrido;
     }
+
+    public String dibujarPorNiveles() {
+        String recorrido="";
+        if (!esArbolVacio()){
+            Queue<NodoBinario<K,V>> colaDeNodos= new LinkedList<>();//cola
+            colaDeNodos.offer(raiz);//añadir a la cola
+            do{
+                NodoBinario<K,V> nodoActual = colaDeNodos.poll();//descolar
+                recorrido+=nodoActual.getClave()+"\n";
+                if(!nodoActual.esVacioHijoIzquierdo()){
+                    colaDeNodos.offer(nodoActual.getHijoIzquierdo());
+                    recorrido="  "+recorrido;
+                }
+                if(!nodoActual.esVacioHijoDerecho()){
+                    colaDeNodos.offer(nodoActual.getHijoDerecho());
+                    recorrido="  "+recorrido;
+                }
+
+            }while (!colaDeNodos.isEmpty());//mientras no este vacia
+        }
+        return recorrido;
+    }
+    public int nivelActual(K claveABuscar){
+        int nivel=0;
+        NodoBinario<K,V> nodoActual= raiz;
+        while(!NodoBinario.esNodoVacio(nodoActual));{
+            if (nodoActual.getClave().compareTo(claveABuscar)==0){
+                return nivel;
+            }else if (nodoActual.getClave().compareTo(claveABuscar)>0){
+                nodoActual=nodoActual.getHijoIzquierdo();
+            }else {
+                nodoActual=nodoActual.getHijoDerecho();
+            }
+            nivel++;
+        }
+            return nivel;
+    }
+    public String dibujararbol1(){
+
+        return dibujar(raiz);
+    }
+    public String dibujar(NodoBinario<K,V> nodoActual){
+        String arbol="";
+        if (NodoBinario.esNodoVacio(nodoActual)) {
+            return arbol;
+        }
+
+    }
+
+    public String dibujarArbol() {
+        if (raiz == null) {
+            return "";
+        }
+
+        StringBuilder resultado = new StringBuilder();
+        Queue<NodoBinario> cola = new LinkedList<>();
+        cola.add(raiz);
+
+        while (!cola.isEmpty()) {
+            int size = cola.size();
+
+            for (int i = 0; i < size; i++) {
+                NodoBinario nodo = cola.poll();
+
+                if (nodo != null) {
+                    resultado.append(" ").append(nodo.getClave());
+                    cola.add(nodo.getHijoIzquierdo());
+                    cola.add(nodo.getHijoDerecho());
+                } else {
+                    resultado.append("");
+                }
+            }
+
+            resultado.append("\n");
+        }
+
+        return resultado.toString();
+    }
+
 }

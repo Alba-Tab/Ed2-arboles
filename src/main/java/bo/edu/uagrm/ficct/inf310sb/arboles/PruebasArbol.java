@@ -6,9 +6,9 @@ import bo.edu.uagrm.ficct.inf310sb.arboles.ui.ArbolMViasBusqueda;
 
 public class PruebasArbol {
     public static void main(String[] arg){
-        // ArbolBinarioBusqueda<Integer, String> arbolPrueba = new ArbolBinarioBusqueda<>();
+         ArbolBinarioBusqueda<Integer, String> arbolPrueba = new ArbolBinarioBusqueda<>();
         //  ArbolMViasBusqueda<Integer,String> arbolPrueba = new ArbolMViasBusqueda<>();
-         AVL<Integer,String> arbolPrueba = new AVL<>();
+        // AVL<Integer,String> arbolPrueba = new AVL<>();
         arbolPrueba.insertar(75,"MM");
         arbolPrueba.insertar(50,"XY");
         arbolPrueba.insertar(90,"A8");
@@ -26,6 +26,7 @@ public class PruebasArbol {
 
         System.out.println("Recorrido en preOrden \n"+arbolPrueba.recorridoEnPreOrden());
         System.out.println("Recorrido por niveles \n"+arbolPrueba.recorridoPorNiveles());
+        System.out.println(arbolPrueba.dibujarArbol());
        /*
         ArbolBinarioBusqueda<Integer,String> arbolReconstruidoPreOrden = new ArbolBinarioBusqueda<>(arbolPrueba.recorridoEnInOrden(),arbolPrueba.recorridoEnInOrdenValores(),
                 arbolPrueba.recorridoEnPreOrden(),arbolPrueba.recorridoEnPreOrdenValores(),true);
