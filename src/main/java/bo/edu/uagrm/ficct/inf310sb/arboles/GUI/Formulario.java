@@ -17,4 +17,8 @@ public class Formulario {
     public static void main(String[] args) {
         new Formulario();
     }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
 }

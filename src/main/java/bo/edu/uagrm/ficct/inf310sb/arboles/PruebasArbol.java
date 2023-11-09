@@ -3,12 +3,14 @@ package bo.edu.uagrm.ficct.inf310sb.arboles;
 import bo.edu.uagrm.ficct.inf310sb.arboles.ui.AVL;
 import bo.edu.uagrm.ficct.inf310sb.arboles.ui.ArbolBinarioBusqueda;
 import bo.edu.uagrm.ficct.inf310sb.arboles.ui.ArbolMViasBusqueda;
+import bo.edu.uagrm.ficct.inf310sb.arboles.ui.IArbolBusqueda;
 
 public class PruebasArbol {
     public static void main(String[] arg){
-         ArbolBinarioBusqueda<Integer, String> arbolPrueba = new ArbolBinarioBusqueda<>();
-        //  ArbolMViasBusqueda<Integer,String> arbolPrueba = new ArbolMViasBusqueda<>();
-        // AVL<Integer,String> arbolPrueba = new AVL<>();
+        IArbolBusqueda<Integer, String> arbolPrueba;
+        //  arbolPrueba = new ArbolBinarioBusqueda<>();
+        // arbolPrueba = new ArbolMViasBusqueda<>();
+         arbolPrueba = new AVL<>();
         arbolPrueba.insertar(75,"MM");
         arbolPrueba.insertar(50,"XY");
         arbolPrueba.insertar(90,"A8");
@@ -26,7 +28,6 @@ public class PruebasArbol {
 
         System.out.println("Recorrido en preOrden \n"+arbolPrueba.recorridoEnPreOrden());
         System.out.println("Recorrido por niveles \n"+arbolPrueba.recorridoPorNiveles());
-        System.out.println(arbolPrueba.dibujarArbol());
        /*
         ArbolBinarioBusqueda<Integer,String> arbolReconstruidoPreOrden = new ArbolBinarioBusqueda<>(arbolPrueba.recorridoEnInOrden(),arbolPrueba.recorridoEnInOrdenValores(),
                 arbolPrueba.recorridoEnPreOrden(),arbolPrueba.recorridoEnPreOrdenValores(),true);

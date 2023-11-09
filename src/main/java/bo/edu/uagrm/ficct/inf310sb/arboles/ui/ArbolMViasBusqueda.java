@@ -13,7 +13,7 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
     protected  NodoMVias<K,V> raiz;
     protected final int orden;
     private static final int ORDEN_MINIMO = 3;
-    private static final int POSICION_INVALIDA = -1;
+    protected static final int POSICION_INVALIDA = -1;
     public ArbolMViasBusqueda(){
         this.orden = ArbolMViasBusqueda.ORDEN_MINIMO;
     }

@@ -2,6 +2,7 @@ package bo.edu.uagrm.ficct.inf310sb.arboles.ui;
 
 import bo.edu.uagrm.ficct.inf310sb.arboles.excepciones.ClaveNoExisteExcepcion;
 
+import javax.print.attribute.standard.NumberOfDocuments;
 import java.util.*;
 
 public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
@@ -133,7 +134,7 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
        this.raiz= eliminar(raiz,clave);
        return valorARetornar;
     }
-    private NodoBinario<K,V> eliminar(NodoBinario<K,V> nodoActual,K claveAEliminar){
+    protected NodoBinario<K,V> eliminar(NodoBinario<K,V> nodoActual,K claveAEliminar){
         K claveDelNodoActual=nodoActual.getClave();
         if (claveAEliminar.compareTo(claveDelNodoActual)<0){
             NodoBinario<K,V> supuestoHijoIzquierdo =
@@ -441,27 +442,15 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         int nivel=0;
         NodoBinario<K,V> nodoActual= raiz;
         while(!NodoBinario.esNodoVacio(nodoActual));{
-            if (nodoActual.getClave().compareTo(claveABuscar)==0){
-                return nivel;
-            }else if (nodoActual.getClave().compareTo(claveABuscar)>0){
-                nodoActual=nodoActual.getHijoIzquierdo();
-            }else {
+            K claveNodoActual = nodoActual.getClave();
+            if (claveABuscar.compareTo(claveNodoActual)>0){
                 nodoActual=nodoActual.getHijoDerecho();
-            }
+            } else if (claveABuscar.compareTo(claveNodoActual)<0){
+                nodoActual=nodoActual.getHijoIzquierdo();
+            } else return nivel;
             nivel++;
         }
             return nivel;
-    }
-    public String dibujararbol1(){
-
-        return dibujar(raiz);
-    }
-    public String dibujar(NodoBinario<K,V> nodoActual){
-        String arbol="";
-        if (NodoBinario.esNodoVacio(nodoActual)) {
-            return arbol;
-        }
-
     }
 
     public String dibujarArbol() {
@@ -470,25 +459,31 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         }
 
         StringBuilder resultado = new StringBuilder();
-        Queue<NodoBinario> cola = new LinkedList<>();
+        Queue<NodoBinario<K,V>> cola = new LinkedList<>();
         cola.add(raiz);
-
+        int nivelActual =0;
+        for (int i=0;i<this.nivel();i++){
+            resultado.append("    ");
+        }
         while (!cola.isEmpty()) {
             int size = cola.size();
 
             for (int i = 0; i < size; i++) {
-                NodoBinario nodo = cola.poll();
+                NodoBinario<K,V> nodo = cola.poll();
 
                 if (nodo != null) {
-                    resultado.append(" ").append(nodo.getClave());
+                    resultado.append("  ").append(nodo.getClave());
                     cola.add(nodo.getHijoIzquierdo());
                     cola.add(nodo.getHijoDerecho());
                 } else {
-                    resultado.append("");
+                    resultado.append("  ").append("##");
                 }
             }
-
+            nivelActual++;
             resultado.append("\n");
+            for (int i=0;i<(this.nivel()-nivelActual);i++){
+                resultado.append("    ");
+            }
         }
 
         return resultado.toString();

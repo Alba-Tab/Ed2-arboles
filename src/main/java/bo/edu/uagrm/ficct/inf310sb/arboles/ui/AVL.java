@@ -1,5 +1,5 @@
 package bo.edu.uagrm.ficct.inf310sb.arboles.ui;
-
+import bo.edu.uagrm.ficct.inf310sb.arboles.excepciones.ClaveNoExisteExcepcion;
 public class AVL <K extends Comparable<K>,V>
     extends ArbolBinarioBusqueda<K,V> {
     //extendido de la clase ArbolBinarioBusqueda
@@ -85,5 +85,16 @@ public class AVL <K extends Comparable<K>,V>
         nodoActual.setHijoIzquierdo(rotacionSimpleAIzq(nodoActual.getHijoIzquierdo()));
         return rotacionSimpleAderecha(nodoActual);
 
+    }
+    public V eliminar(K claveAEliminar) throws ClaveNoExisteExcepcion {
+        if (claveAEliminar==null){
+            throw new ClaveNoExisteExcepcion("La clave nula, no puede ser nula");
+        }
+        V valorAEliminar = this.buscar(claveAEliminar);
+        if (valorAEliminar==null){
+            throw new ClaveNoExisteExcepcion();
+        }
+        this.raiz =eliminar(this.raiz,claveAEliminar);
+        return valorAEliminar;
     }
 }
