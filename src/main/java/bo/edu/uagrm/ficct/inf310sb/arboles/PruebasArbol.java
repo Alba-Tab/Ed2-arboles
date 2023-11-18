@@ -7,11 +7,11 @@ import bo.edu.uagrm.ficct.inf310sb.arboles.ui.IArbolBusqueda;
 
 public class PruebasArbol {
     public static void main(String[] arg){
-        IArbolBusqueda<Integer, String> arbolPrueba;
-        //  arbolPrueba = new ArbolBinarioBusqueda<>();
-        // arbolPrueba = new ArbolMViasBusqueda<>();
-         arbolPrueba = new AVL<>();
-        arbolPrueba.insertar(75,"MM");
+        //IArbolBusqueda<Integer, String> arbolPrueba;
+        //ArbolBinarioBusqueda<Integer, String>  arbolPrueba = new ArbolBinarioBusqueda<>();
+        //ArbolMViasBusqueda<Integer, String> arbolPrueba = new ArbolMViasBusqueda<>();
+        AVL<Integer, String> arbolPrueba = new AVL<>();
+        arbolPrueba.insertar(77,"MM");
         arbolPrueba.insertar(50,"XY");
         arbolPrueba.insertar(90,"A8");
         arbolPrueba.insertar(30,"AT");
@@ -36,6 +36,7 @@ public class PruebasArbol {
                 arbolPrueba.recorridoEnPostOrden(),arbolPrueba.recorridoEnPostOrdenValores(),false);
         System.out.println("Reconstruido con PostOrden"+arbolReconstruidoPreOrden.recorridoEnInOrden() );
         */
+        System.out.println(arbolPrueba.imprimirArbol());
 
     }
 }

@@ -14,6 +14,9 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
     protected final int orden;
     private static final int ORDEN_MINIMO = 3;
     protected static final int POSICION_INVALIDA = -1;
+
+
+
     public ArbolMViasBusqueda(){
         this.orden = ArbolMViasBusqueda.ORDEN_MINIMO;
     }
@@ -66,11 +69,101 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
         }while (!NodoMVias.esNodoVacio(nodoActual));
     }
 
+
+
     @Override
     public V eliminar(K clave) throws ClaveNoExisteExcepcion {
-        return null;
+        if (clave == null){
+            throw new IllegalArgumentException("Clave no puede ser nula");
+        }
+        V valorARetornar = this.buscar(clave);
+        if (valorARetornar==null){
+            throw new ClaveNoExisteExcepcion();
+        }
+        this.raiz= eliminar(raiz,clave);
+        return valorARetornar;
     }
 
+    private NodoMVias<K,V> eliminar(NodoMVias<K,V> nodoActual,K claveAEliminar){
+
+        for (int i=0;i<nodoActual.nroClavesNoVacias(); i++){
+            K claveEnTurno =nodoActual.getClave(i);
+            if (claveAEliminar.compareTo(claveEnTurno)==0){
+                if (nodoActual.esHoja()){
+                    this.eliminarClaveDeNodoDePosicion(nodoActual,i);
+                    if (!nodoActual.hayClavesNoVacias()){
+                        return NodoMVias.nodoVacio();
+                    }
+                    return nodoActual;
+                }
+                //caso 2
+                K claveDeReemplazo;
+                        if (this.hayHijosMasAdelanteDeLaPosicion(nodoActual,i)){
+                            claveDeReemplazo = this.obtenerSucesorInOrden(nodoActual,claveAEliminar);
+                        } else {
+                            claveDeReemplazo = this.obtenerPredecesorInOrden(nodoActual,claveAEliminar);
+                        }
+
+                        V valorDeReemplazo= this.buscar(claveDeReemplazo);
+
+                        nodoActual= eliminar(nodoActual,claveDeReemplazo);
+                        nodoActual.setClave(i,claveDeReemplazo);
+                        nodoActual.setValor(i,valorDeReemplazo);
+                        return nodoActual;
+            }
+            if (claveAEliminar.compareTo(claveEnTurno)<0){
+                NodoMVias<K,V> supuestoNuevoHijo = this.eliminar(nodoActual,claveAEliminar);
+                nodoActual.setHijo(i,supuestoNuevoHijo);
+                return nodoActual;
+            }
+        }
+        NodoMVias<K,V> supuestoNuevoHijo = this.eliminar(nodoActual.getHijo(nodoActual.nroClavesNoVacias()),
+                claveAEliminar);
+        nodoActual.setHijo(nodoActual.nroClavesNoVacias(),supuestoNuevoHijo);
+        return nodoActual;
+    }
+
+    protected void eliminarClaveDeNodoDePosicion(NodoMVias<K,V> nodoActual, int posicion){
+
+        for (int i =posicion;i< nodoActual.nroClavesNoVacias();i++){
+            nodoActual.setClave(i,nodoActual.getClave(i+1));
+            nodoActual.setValor(i,nodoActual.getValor(i+1));
+        }
+        nodoActual.setValor(nodoActual.nroClavesNoVacias(), (V)NodoMVias.datoVacio());
+        nodoActual.setClave(nodoActual.nroClavesNoVacias(), (K)NodoMVias.datoVacio());
+    }
+
+    private boolean hayHijosMasAdelanteDeLaPosicion(NodoMVias<K,V> nodoActual, int posicion){
+        return !nodoActual.esHijoVacio(posicion+1);
+    }
+
+    protected K obtenerSucesorInOrden (NodoMVias<K,V> nodoActual,K claveDeReferencia){
+        boolean hijoEncontrado=false;
+        for (int i=0;i< nodoActual.nroClavesNoVacias() && !hijoEncontrado;i++ ){
+            if (nodoActual.getClave(i).compareTo(claveDeReferencia)==0){
+                nodoActual=nodoActual.getHijo(i+1);
+                hijoEncontrado=true;
+            }
+        }
+        while (nodoActual.getHijo(0)!=NodoMVias.nodoVacio()){
+            nodoActual=nodoActual.getHijo(0);
+        }
+        return nodoActual.getClave(0);
+    }
+
+    protected K obtenerPredecesorInOrden (NodoMVias<K,V> nodoActual,K claveDeReferencia){
+        boolean hijoEncontrado=false;
+        for (int i=0;i< nodoActual.nroClavesNoVacias() && !hijoEncontrado;i++ ){
+            if (nodoActual.getClave(i).compareTo(claveDeReferencia)==0){
+                nodoActual=nodoActual.getHijo(i);
+                hijoEncontrado=true;
+            }
+        }
+        while (nodoActual.getHijo(nodoActual.nroClavesNoVacias())!=NodoMVias.nodoVacio()){
+            nodoActual=nodoActual.getHijo(nodoActual.nroClavesNoVacias());
+        }
+        return nodoActual.getClave(nodoActual.nroClavesNoVacias()-1);
+    }
     protected int buscarPosicionDeClave(K claveABuscar,NodoMVias<K,V> nodoActual){
         for (int i=0;i<nodoActual.nroClavesNoVacias();i++){
             if ((claveABuscar.compareTo(nodoActual.getClave(i))==0)){
@@ -90,7 +183,6 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
     }
 
     protected void insertarClaveYValorOrdenado(NodoMVias<K,V> nodoActual, K claveAInsertar, V valorAsociado){
-       boolean valorInsertado = false;
         for (int i = 0;i<nodoActual.nroClavesNoVacias();i++){
             if (claveAInsertar.compareTo(nodoActual.getClave(i))<0){
                 recorrerClaveYValor(nodoActual,i);
@@ -209,6 +301,21 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
             recorridoEnInOrden(nodoActual.getHijo(nodoActual.nroClavesNoVacias()),recorrido);
         }
     }
+    public List<V> recorridoValoresEnInOrden() {
+        List<V> recorrido = new LinkedList<>();
+        recorridoValoresInOrden(raiz,recorrido);
+        return recorrido;
+    }
+
+    private void recorridoValoresInOrden(NodoMVias<K,V> nodoActual,List<V> recorrido){
+        if (!NodoMVias.esNodoVacio(nodoActual)){
+            for (int i=0; i < nodoActual.nroClavesNoVacias();i++){
+                recorridoValoresInOrden(nodoActual.getHijo(i),recorrido);
+                recorrido.add(nodoActual.getValor(i));
+            }
+            recorridoValoresInOrden(nodoActual.getHijo(nodoActual.nroClavesNoVacias()),recorrido);
+        }
+    }
 
     @Override
     public List<K> recorridoEnPreOrden() {
@@ -267,6 +374,54 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
             }while (!colaDeNodos.isEmpty());//mientras no este vacia
         }
         return recorrido;
+    }
+
+    public String imprimirArbol(){
+        String recorrido="";
+        String espacio="└";
+        if (!esArbolVacio()){
+            Queue<NodoMVias<K, V>> colaDeNodos= new LinkedList<>();//cola
+            colaDeNodos.offer(raiz);//añadir a la cola
+            int hijo =0;
+            do{
+                NodoMVias<K, V> nodoActual = colaDeNodos.poll();//descolar
+                int nivelNodoActual = nivelActual(nodoActual,raiz,0);
+
+                for (int i = 0; i < nodoActual.nroClavesNoVacias(); i++){
+                    recorrido+=espacio+hijo+"├("+i+") "+nodoActual.getClave(i)+"\n";
+                    if(!nodoActual.esHijoVacio(i)){
+                        colaDeNodos.offer(nodoActual.getHijo(i));
+                    }
+                }
+                hijo++;
+                if (nivelNodoActual!=nivelActual(colaDeNodos.peek(),raiz,0) ) {
+                    espacio="  "+espacio;
+                    hijo=0;
+                }
+                if(!nodoActual.esHijoVacio(nodoActual.nroClavesNoVacias())){
+                    colaDeNodos.offer(nodoActual.getHijo(nodoActual.nroClavesNoVacias()));
+                }
+            }while (!colaDeNodos.isEmpty());//mientras no este vacia
+        }
+        return recorrido;
+    }
+
+    protected int nivelActual(NodoMVias<K, V> actual, NodoMVias<K, V> nodo, int nivelActual) {
+        if (NodoMVias.esNodoVacio(actual)) {
+            return -1; // Nodo no encontrado
+        }
+
+        if (actual == nodo) {
+            return nivelActual;
+        }
+
+        for (int i = 0; i < actual.nroClavesNoVacias() + 1; i++) {
+            int nivelHijo = nivelActual(actual.getHijo(i), nodo, nivelActual + 1);
+            if (nivelHijo != -1) {
+                return nivelHijo;
+            }
+        }
+        return -1; // Nodo no encontrado en los hijos
     }
 
     public int cantidadNodosConHijosPar(){

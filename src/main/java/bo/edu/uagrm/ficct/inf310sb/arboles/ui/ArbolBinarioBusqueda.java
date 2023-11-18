@@ -10,8 +10,9 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
     protected NodoBinario<K,V> raiz;
     public ArbolBinarioBusqueda(){}
 
-    public ArbolBinarioBusqueda(List<K> clavesInOrden,List<V> valoresInOrden,
-                                List<K> clavesNoInOrden,List<V> valoresNoInOrden,
+
+    public ArbolBinarioBusqueda(List<K> clavesInOrden, List<V> valoresInOrden,
+                                List<K> clavesNoInOrden, List<V> valoresNoInOrden,
                                 boolean conPreOrden){
         //con preorden true
         if (conPreOrden){
@@ -304,7 +305,7 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         }
         return recorrido;
     }
-    public List<V> recorridoEnInOrdenValores() {
+    public List<V> recorridoValoresEnInOrden() {
         List<V> recorrido = new LinkedList<>();
         recorridoEnInOrdenValores(raiz,recorrido);
         return recorrido;
@@ -416,28 +417,6 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         }
         return recorrido;
     }
-
-    public String dibujarPorNiveles() {
-        String recorrido="";
-        if (!esArbolVacio()){
-            Queue<NodoBinario<K,V>> colaDeNodos= new LinkedList<>();//cola
-            colaDeNodos.offer(raiz);//añadir a la cola
-            do{
-                NodoBinario<K,V> nodoActual = colaDeNodos.poll();//descolar
-                recorrido+=nodoActual.getClave()+"\n";
-                if(!nodoActual.esVacioHijoIzquierdo()){
-                    colaDeNodos.offer(nodoActual.getHijoIzquierdo());
-                    recorrido="  "+recorrido;
-                }
-                if(!nodoActual.esVacioHijoDerecho()){
-                    colaDeNodos.offer(nodoActual.getHijoDerecho());
-                    recorrido="  "+recorrido;
-                }
-
-            }while (!colaDeNodos.isEmpty());//mientras no este vacia
-        }
-        return recorrido;
-    }
     public int nivelActual(K claveABuscar){
         int nivel=0;
         NodoBinario<K,V> nodoActual= raiz;
@@ -453,40 +432,21 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
             return nivel;
     }
 
-    public String dibujarArbol() {
-        if (raiz == null) {
-            return "";
-        }
 
-        StringBuilder resultado = new StringBuilder();
-        Queue<NodoBinario<K,V>> cola = new LinkedList<>();
-        cola.add(raiz);
-        int nivelActual =0;
-        for (int i=0;i<this.nivel();i++){
-            resultado.append("    ");
-        }
-        while (!cola.isEmpty()) {
-            int size = cola.size();
-
-            for (int i = 0; i < size; i++) {
-                NodoBinario<K,V> nodo = cola.poll();
-
-                if (nodo != null) {
-                    resultado.append("  ").append(nodo.getClave());
-                    cola.add(nodo.getHijoIzquierdo());
-                    cola.add(nodo.getHijoDerecho());
-                } else {
-                    resultado.append("  ").append("##");
-                }
-            }
-            nivelActual++;
-            resultado.append("\n");
-            for (int i=0;i<(this.nivel()-nivelActual);i++){
-                resultado.append("    ");
-            }
-        }
-
-        return resultado.toString();
+    public String imprimirArbol() {
+        String espacio = "";
+        return imprimir(raiz,espacio);
     }
 
+    protected String imprimir(NodoBinario<K,V> nodoActual,String espacio){
+       String arbol ="";
+        if (!NodoBinario.esNodoVacio(nodoActual)){
+            arbol=espacio+"└"+nodoActual.getClave()+"\n";
+            espacio+="  ";
+            arbol+=imprimir(nodoActual.getHijoIzquierdo(),espacio);
+
+            arbol+=imprimir(nodoActual.getHijoDerecho(),espacio);
+        }
+        return arbol;
+    }
 }
