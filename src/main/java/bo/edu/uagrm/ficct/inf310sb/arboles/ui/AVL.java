@@ -26,11 +26,12 @@ public class AVL <K extends Comparable<K>,V>
             nodoActual.setHijoIzquierdo(supuestoNuevoHijoIzquierdo);
             return balancear(nodoActual);
         }
-        if (claveAInsertar.compareTo(claveDelNodoActual)>=0){
+        if (claveAInsertar.compareTo(claveDelNodoActual)>0){
             NodoBinario<K,V> supuestoNodoHijoDerecho = insertar(nodoActual.getHijoDerecho(),claveAInsertar,valorAsociado);
             nodoActual.setHijoDerecho(supuestoNodoHijoDerecho);
             return balancear(nodoActual);
         }
+        nodoActual.setValor(valorAsociado);
         return nodoActual;
     }
     private NodoBinario<K,V> balancear(NodoBinario<K,V> nodoABalancear){
@@ -78,7 +79,7 @@ public class AVL <K extends Comparable<K>,V>
         return nodoQueRota;
     }
     private NodoBinario<K,V>rotacionDobleAIzq(NodoBinario<K,V> nodoActual){
-        nodoActual.setHijoDerecho(rotacionSimpleAderecha(nodoActual.getHijoIzquierdo()));
+        nodoActual.setHijoDerecho(rotacionSimpleAderecha(nodoActual.getHijoDerecho()));
         return rotacionSimpleAIzq(nodoActual);
     }
     private NodoBinario<K,V>rotacionDobleADerecha(NodoBinario<K,V> nodoActual){
@@ -96,5 +97,40 @@ public class AVL <K extends Comparable<K>,V>
         }
         this.raiz =eliminar(this.raiz,claveAEliminar);
         return valorAEliminar;
+    }
+    private NodoBinario<K,V> eliminar(NodoBinario<K,V> nodoActual,K claveAEliminar){
+        K claveDelNodoActual=nodoActual.getClave();
+        if (claveAEliminar.compareTo(claveDelNodoActual)<0){
+            NodoBinario<K,V> supuestoHijoIzquierdo =
+                    eliminar(nodoActual.getHijoIzquierdo(),claveAEliminar);
+            nodoActual.setHijoIzquierdo(supuestoHijoIzquierdo);
+            return balancear(nodoActual);
+        }
+        if (claveAEliminar.compareTo(claveDelNodoActual)>0){
+            NodoBinario<K,V> supuestoHijoDerecho=
+                    eliminar(nodoActual.getHijoDerecho(),claveAEliminar);
+            nodoActual.setHijoDerecho(supuestoHijoDerecho);
+            return balancear(nodoActual);
+        }
+        //caso 1
+        if(nodoActual.esHoja()){
+            return NodoBinario.nodoVacio();
+        }
+        //caso 2
+        if (!nodoActual.esVacioHijoIzquierdo() && nodoActual.esVacioHijoDerecho()){
+            return balancear(nodoActual.getHijoIzquierdo());
+        }
+        if (!nodoActual.esVacioHijoDerecho() && nodoActual.esVacioHijoIzquierdo()){
+            return  balancear(nodoActual.getHijoDerecho());
+        }
+        //caso 3
+        //recibe el de la derecha y se mueve a puro izquierda
+        NodoBinario<K,V> nodoDelSucesor =this.getSucesor(nodoActual.getHijoDerecho());
+        NodoBinario<K,V> supuestoHijoDerecho =this.eliminar(nodoActual.getHijoDerecho(),
+                nodoDelSucesor.getClave());
+        nodoActual.setHijoDerecho(supuestoHijoDerecho);
+        nodoActual.setClave(nodoDelSucesor.getClave());
+        nodoActual.setValor(nodoDelSucesor.getValor());
+        return balancear(nodoActual);
     }
 }

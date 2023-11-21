@@ -92,5 +92,15 @@ public class NodoMVias<K,V> {
         return this.nroClavesNoVacias() == this.listaDeClaves.size();
     }
 
+    public int nroDeHijosNoVacios(){
+        int nroHijos=0;
+        for (int i=0;i<listaDeHijos.size();i++){
+            if(listaDeHijos.get(0)!=NodoMVias.datoVacio()){
+                nroHijos++;
+            }
+        }
+        return nroHijos;
+    }
+
 
 }

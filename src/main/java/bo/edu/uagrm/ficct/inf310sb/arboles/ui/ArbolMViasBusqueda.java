@@ -3,18 +3,20 @@ package bo.edu.uagrm.ficct.inf310sb.arboles.ui;
 import bo.edu.uagrm.ficct.inf310sb.arboles.excepciones.ClaveNoExisteExcepcion;
 import bo.edu.uagrm.ficct.inf310sb.arboles.excepciones.OrdenInvalidoExcepcion;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import java.awt.Graphics;
+
 public class ArbolMViasBusqueda <K extends Comparable<K>,V>
         implements IArbolBusqueda<K,V>{
-    protected  NodoMVias<K,V> raiz;
+    protected   NodoMVias<K,V> raiz;
     protected final int orden;
-    private static final int ORDEN_MINIMO = 3;
+    protected static final int ORDEN_MINIMO = 3;
     protected static final int POSICION_INVALIDA = -1;
-
 
 
     public ArbolMViasBusqueda(){
@@ -376,6 +378,29 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
         return recorrido;
     }
 
+    public List<V> recorridoValoresEnPorNiveles() {
+        List<V> recorrido=new ArrayList<>();
+        if (!esArbolVacio()){
+            Queue<NodoMVias<K, V>> colaDeNodos= new LinkedList<>();//cola
+            colaDeNodos.offer(raiz);//añadir a la cola
+
+            do{
+                NodoMVias<K, V> nodoActual = colaDeNodos.poll();//descolar
+                for (int i = 0; i < nodoActual.nroClavesNoVacias(); i++){
+                    recorrido.add(nodoActual.getValor(i));
+                    if(!nodoActual.esHijoVacio(i)){
+                        colaDeNodos.offer(nodoActual.getHijo(i));
+                    }
+                }
+                if(!nodoActual.esHijoVacio(nodoActual.nroClavesNoVacias())){
+                    colaDeNodos.offer(nodoActual.getHijo(nodoActual.nroClavesNoVacias()));
+                }
+
+
+            }while (!colaDeNodos.isEmpty());//mientras no este vacia
+        }
+        return recorrido;
+    }
     public String imprimirArbol(){
         String recorrido="";
         String espacio="└";
@@ -442,5 +467,29 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
             return cantidad+1;
         }
         return cantidad;
+    }
+
+    public NodoBinario<K, V> getraiz(){
+        return null;
+    }
+    public NodoMVias<K,V> getraizM(){
+        return raiz;
+    }
+
+    public static int getOrdenMinimo(){
+        return ORDEN_MINIMO;
+    }
+    public int nroClavesVaciasHastaElNivel(int nivel){
+        return nroClavesVaciasHastaElNivel(raiz,nivel);
+    }
+    private int nroClavesVaciasHastaElNivel(NodoMVias<K,V> nodoActual, int nivel){
+        if(NodoMVias.esNodoVacio(nodoActual)){
+            return orden;
+        }
+        int nroClaves=orden-nodoActual.nroClavesNoVacias();
+        for(int i=0;i<=nodoActual.nroClavesNoVacias() && nivel!=0;i++){
+            nroClaves+=nroClavesVaciasHastaElNivel(nodoActual.getHijo(i),nivel-1);
+        }
+        return nroClaves;
     }
 }

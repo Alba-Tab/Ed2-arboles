@@ -11,10 +11,6 @@ public class ArbolB<K extends Comparable<K>, V> extends
     private int nroMinimoDeHijos;
     private int nroMinimoDeDatos;
     private int nroMaximoDeDatos;
-    @Override
-    public NodoMVias<K, V> getRaiz() {
-        return raiz;
-    }
     public ArbolB(){
         super();
         this.calcularAdicionales();

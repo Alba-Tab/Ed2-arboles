@@ -7,7 +7,7 @@ import java.util.*;
 
 public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         IArbolBusqueda<K,V> {
-    protected NodoBinario<K,V> raiz;
+    public NodoBinario<K,V> raiz;
     public ArbolBinarioBusqueda(){}
 
 
@@ -135,7 +135,7 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
        this.raiz= eliminar(raiz,clave);
        return valorARetornar;
     }
-    protected NodoBinario<K,V> eliminar(NodoBinario<K,V> nodoActual,K claveAEliminar){
+    private NodoBinario<K,V> eliminar(NodoBinario<K,V> nodoActual,K claveAEliminar){
         K claveDelNodoActual=nodoActual.getClave();
         if (claveAEliminar.compareTo(claveDelNodoActual)<0){
             NodoBinario<K,V> supuestoHijoIzquierdo =
@@ -143,7 +143,7 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
             nodoActual.setHijoIzquierdo(supuestoHijoIzquierdo);
             return nodoActual;
         }
-        if (claveAEliminar.compareTo(claveAEliminar)>0){
+        if (claveAEliminar.compareTo(claveDelNodoActual)>0){
             NodoBinario<K,V> supuestoHijoDerecho=
                     eliminar(nodoActual.getHijoDerecho(),claveAEliminar);
             nodoActual.setHijoDerecho(supuestoHijoDerecho);
@@ -165,8 +165,9 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         NodoBinario<K,V> nodoDelSucesor =this.getSucesor(nodoActual.getHijoDerecho());
         NodoBinario<K,V> supuestoHijoDerecho =this.eliminar(nodoActual.getHijoDerecho(),
                                                             nodoDelSucesor.getClave());
-        nodoDelSucesor.setClave(nodoDelSucesor.getClave());
-        nodoDelSucesor.setValor(nodoDelSucesor.getValor());
+        nodoActual.setHijoDerecho(supuestoHijoDerecho);
+        nodoActual.setClave(nodoDelSucesor.getClave());
+        nodoActual.setValor(nodoDelSucesor.getValor());
         return nodoActual;
     }
     protected NodoBinario<K,V> getSucesor(NodoBinario<K,V> nodoActual){
@@ -417,6 +418,26 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         }
         return recorrido;
     }
+    public List<V> recorridoValoresEnPorNiveles() {
+        List<V> recorrido=new ArrayList<>();
+        if (!esArbolVacio()){
+            Queue<NodoBinario<K,V>> colaDeNodos= new LinkedList<>();//cola
+            colaDeNodos.offer(raiz);//añadir a la cola
+            do{
+                NodoBinario<K,V> nodoActual = colaDeNodos.poll();//descolar
+                recorrido.add(nodoActual.getValor());
+                if(!nodoActual.esVacioHijoIzquierdo()){
+                    colaDeNodos.offer(nodoActual.getHijoIzquierdo());
+                }
+                if(!nodoActual.esVacioHijoDerecho()){
+                    colaDeNodos.offer(nodoActual.getHijoDerecho());
+                }
+
+            }while (!colaDeNodos.isEmpty());//mientras no este vacia
+        }
+        return recorrido;
+    }
+
     public int nivelActual(K claveABuscar){
         int nivel=0;
         NodoBinario<K,V> nodoActual= raiz;
@@ -448,5 +469,29 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
             arbol+=imprimir(nodoActual.getHijoDerecho(),espacio);
         }
         return arbol;
+    }
+
+    public NodoBinario<K,V> getraiz(){
+        return raiz;
+    }
+    public NodoMVias<K,V> getraizM(){
+        return null;
+    }
+
+    public int nroNodosSoloConHijoIzquierdo(){
+        return nroNodosSoloConHijoIzquierdo(this.raiz);
+    }
+
+    private int nroNodosSoloConHijoIzquierdo(NodoBinario<K,V> nodoActual){
+        if (NodoBinario.esNodoVacio(nodoActual)){
+            return 0;
+        }
+        int cantidad=nroNodosSoloConHijoIzquierdo(nodoActual.getHijoIzquierdo())
+                +nroNodosSoloConHijoIzquierdo(nodoActual.getHijoDerecho());
+        if(NodoBinario.esNodoVacio(nodoActual.getHijoDerecho()) &&
+            !NodoBinario.esNodoVacio(nodoActual.getHijoIzquierdo())){
+            cantidad++;
+        }
+        return cantidad;
     }
 }

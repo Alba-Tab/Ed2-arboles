@@ -1,16 +1,17 @@
 package bo.edu.uagrm.ficct.inf310sb.arboles;
 
+import bo.edu.uagrm.ficct.inf310sb.arboles.excepciones.ClaveNoExisteExcepcion;
 import bo.edu.uagrm.ficct.inf310sb.arboles.ui.AVL;
 import bo.edu.uagrm.ficct.inf310sb.arboles.ui.ArbolBinarioBusqueda;
 import bo.edu.uagrm.ficct.inf310sb.arboles.ui.ArbolMViasBusqueda;
 import bo.edu.uagrm.ficct.inf310sb.arboles.ui.IArbolBusqueda;
 
 public class PruebasArbol {
-    public static void main(String[] arg){
+    public static void main(String[] arg) throws ClaveNoExisteExcepcion {
         //IArbolBusqueda<Integer, String> arbolPrueba;
         //ArbolBinarioBusqueda<Integer, String>  arbolPrueba = new ArbolBinarioBusqueda<>();
-        //ArbolMViasBusqueda<Integer, String> arbolPrueba = new ArbolMViasBusqueda<>();
-        AVL<Integer, String> arbolPrueba = new AVL<>();
+        ArbolMViasBusqueda<Integer, String> arbolPrueba = new ArbolMViasBusqueda<>();
+        //AVL<Integer, String> arbolPrueba = new AVL<>();
         arbolPrueba.insertar(77,"MM");
         arbolPrueba.insertar(50,"XY");
         arbolPrueba.insertar(90,"A8");
@@ -36,7 +37,8 @@ public class PruebasArbol {
                 arbolPrueba.recorridoEnPostOrden(),arbolPrueba.recorridoEnPostOrdenValores(),false);
         System.out.println("Reconstruido con PostOrden"+arbolReconstruidoPreOrden.recorridoEnInOrden() );
         */
+        arbolPrueba.insertar(82,"ff");
         System.out.println(arbolPrueba.imprimirArbol());
-
+        System.out.println(arbolPrueba.nroClavesVaciasHastaElNivel(1));
     }
 }
