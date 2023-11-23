@@ -103,11 +103,41 @@ public class ArbolB<K extends Comparable<K>, V> extends
     }
 
     public void prestarseOFusionarse(NodoMVias<K,V> nodoActual,Stack<NodoMVias<K,V>> pilaDeAncestros){
+      /*  NodoMVias<K,V> padre =pilaDeAncestros.pop();
+        int indice = this.getPosicionDeHijo(padre,nodoActual);
+        int indiceHermanoAnterior=indice-1;
+        int indiceHermanoSiguiente=indice+1;
 
+        NodoMVias<K,V> hermanoSiguiente = NodoMVias.nodoVacio();
+        int nroClavesNoVaciasHermanoSiguiente = -this.nroMaximoDeDatos;
+
+        if(indiceHermanoSiguiente<padre.nroClavesNoVacias()){
+            hermanoSiguiente=padre.getHijo(indiceHermanoSiguiente);
+            nroClavesNoVaciasHermanoSiguiente = hermanoSiguiente.nroClavesNoVacias();
+        }
+        if(!NodoMVias.esNodoVacio(hermanoSiguiente) &&
+                nroClavesNoVaciasHermanoSiguiente>this.nroMinimoDeDatos){
+            realizarPrestamoDelHermanoSiguiente(nodoActual,padre,hermanoSiguiente);
+        } else {
+            prestarseDelHermanoAnteriosOFusionarse(nodoActual,padre,her)
+        }*/
     }
 
-    public NodoMVias<K,V> obtenerNodoDelPredesesor(Stack<NodoMVias<K,V> > pilaDeAncestros,NodoMVias<K,V> nodoActual){
-        return null;
+    public NodoMVias<K,V> obtenerNodoDelPredesesor(Stack<NodoMVias<K,V>> pilaDeAncestros,NodoMVias<K,V> nodoActual){
+        // Encontrar el nodo del predecesor
+        NodoMVias<K,V> nodoDelPredesesor = null;
+        if (nodoActual != null) {
+            if (!nodoActual.esHoja()) {
+                pilaDeAncestros.push(nodoActual);
+                NodoMVias<K,V> nodoAux = nodoActual.getHijo(nodoActual.nroClavesNoVacias());
+                while (!nodoAux.esHoja()) {
+                    pilaDeAncestros.push(nodoAux);
+                    nodoAux = nodoAux.getHijo(nodoAux.nroClavesNoVacias());
+                }
+                nodoDelPredesesor = nodoAux;
+            }
+        }
+        return nodoDelPredesesor;
     }
     public void dividir (NodoMVias<K,V> nodoActual,Stack<NodoMVias<K,V> > ancestros){
         K claveQueSube = nodoActual.getClave(nroMinimoDeDatos);

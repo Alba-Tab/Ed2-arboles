@@ -4,7 +4,6 @@ import bo.edu.uagrm.ficct.inf310sb.arboles.excepciones.ClaveNoExisteExcepcion;
 import bo.edu.uagrm.ficct.inf310sb.arboles.ui.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -25,27 +24,32 @@ public class Formulario extends JFrame {
     private JTextField textClave;
     private JTextField textValor;
     private JPanel pizarra;
-    private JLabel textRecorridos;
-    private JButton recorridoPreOrdenButton;
-    private JButton recorridoPostOrdenButton;
-    private JButton recorridoPorNivelesButton;
-    private JButton recorridoInOrden;
+    private JLabel textInOrden;
+    private JLabel textPreOrden;
+    private JLabel textPostOrden;
+    private JLabel textNiveles;
+    private JPanel pizarraClaves;
 
     public Formulario() {
         // Configurar la ventana
         setContentPane(Formulario);
         setTitle("Arboles");
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(screenSize);
+       // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(1000,800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        textInOrden.setText("Recorrido en InOrden: ");
+        textPreOrden.setText("Recorrido en PreOrden: ");
+        textPostOrden.setText("Recorrido en PostOrden: ");
+        textNiveles.setText("Recorrido por Niveles: ");
         // Hacer visible la ventana
         setVisible(true);
+
         ABBButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pizarra.getGraphics().clearRect(0, 0, pizarra.getWidth(), pizarra.getHeight());
+                limpiarPizarra();
                 if (arbolExiste){
                     int respuesta = mostrarVentanaEmergente();
                     if (respuesta == JOptionPane.YES_OPTION) {
@@ -54,17 +58,21 @@ public class Formulario extends JFrame {
                         arbol = new ArbolBinarioBusqueda<>();
                         insertar(arbol, listaDeClaves, listaDeValores);
                         dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
+                        mostrarRecorridosEnInterfaz();
                         return;
                     }
                 }
-                arbol = new ArbolBinarioBusqueda<>();
-                arbolExiste=true;
+                    arbol = new ArbolBinarioBusqueda<>();
+                    arbolExiste=true;
+
+
             }
         });
         AVLButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pizarra.getGraphics().clearRect(0, 0, pizarra.getWidth(), pizarra.getHeight());
+
+                limpiarPizarra();
                 if (arbolExiste){
                     int respuesta = mostrarVentanaEmergente();
                     if (respuesta == JOptionPane.YES_OPTION) {
@@ -72,20 +80,21 @@ public class Formulario extends JFrame {
                         List<String> listaDeValores = arbol.recorridoValoresEnPorNiveles();
                         arbol = new AVL<>();
                         insertar(arbol, listaDeClaves, listaDeValores);
-
                         dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
-
+                        mostrarRecorridosEnInterfaz();
                         return;
                     }
                 }
-                arbol = new AVL<>();
-                arbolExiste=true;
+                    arbol = new AVL<>();
+                    arbolExiste=true;
+
+
             }
         });
         MViasButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pizarra.getGraphics().clearRect(0, 0, pizarra.getWidth(), pizarra.getHeight());
+                limpiarPizarra();
                 if (arbolExiste){
                     int respuesta = mostrarVentanaEmergente();
                     if (respuesta == JOptionPane.YES_OPTION) {
@@ -93,9 +102,7 @@ public class Formulario extends JFrame {
                         List<String> listaDeValores = arbol.recorridoValoresEnPorNiveles();
                         arbol = new ArbolMViasBusqueda<>();
                         insertar(arbol, listaDeClaves, listaDeValores);
-
-                        dibujar.dibujarArbolMVias(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
-
+                        mostrarRecorridosEnInterfaz();
                         return;
                     }
                 }
@@ -107,6 +114,7 @@ public class Formulario extends JFrame {
         arbolBButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                limpiarPizarra();
                 if (arbolExiste){
                     int respuesta = mostrarVentanaEmergente();
                     if (respuesta == JOptionPane.YES_OPTION) {
@@ -114,22 +122,22 @@ public class Formulario extends JFrame {
                         List<String> listaDeValores = arbol.recorridoValoresEnPorNiveles();
                         arbol = new ArbolB<>();
                         insertar(arbol, listaDeClaves, listaDeValores);
-                        pizarra.getGraphics().clearRect(0, 0, pizarra.getWidth(), pizarra.getHeight());
-                        dibujar.dibujarArbolMVias(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
+                        mostrarRecorridosEnInterfaz();
                         return;
                     }
                 }
                 arbol = new ArbolB<>();
-                pizarra.getGraphics().clearRect(0, 0, pizarra.getWidth(), pizarra.getHeight());
                 arbolExiste=true;
             }
         });
         insertarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                limpiarPizarra();
                 arbol.insertar(Integer.parseInt(textClave.getText()),textValor.getText() );
-                pizarra.getGraphics().clearRect(0, 0, pizarra.getWidth(), pizarra.getHeight());
                 dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
+                mostrarRecorridosEnInterfaz();
+
                 textClave.setText("");
                 textValor.setText("");
             }
@@ -137,19 +145,21 @@ public class Formulario extends JFrame {
         eliminarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                limpiarPizarra();
                 try {
                     arbol.eliminar(Integer.parseInt(textClave.getText()));
                     textClave.setText("");
                 } catch (ClaveNoExisteExcepcion ex) {
                     throw new RuntimeException(ex);
                 }
-                pizarra.getGraphics().clearRect(0, 0, pizarra.getWidth(), pizarra.getHeight());
                 dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
+                mostrarRecorridosEnInterfaz();
             }
         });
         arbolPruebaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                limpiarPizarra();
                     arbol.insertar(77,"MM");
                     arbol.insertar(50,"XY");
                     arbol.insertar(90,"A8");
@@ -160,51 +170,10 @@ public class Formulario extends JFrame {
                     arbol.insertar(85,"XA");
                     arbol.insertar(76,"PP");
                     arbol.insertar(30,"TT");
-
-                pizarra.getGraphics().clearRect(0, 0, pizarra.getWidth(), pizarra.getHeight());
                 dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
-            }
-        });
-        recorridoInOrden.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (arbolExiste){
-                    textRecorridos.setText("Recorrido en InOrden: "+arbol.recorridoEnInOrden());
-                }else{
-                    textRecorridos.setText("El arbol no existe");
-                }
+                mostrarRecorridosEnInterfaz();
 
-            }
-        });
-        recorridoPreOrdenButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (arbolExiste){
-                    textRecorridos.setText("Recorrido en PreOrden: "+arbol.recorridoEnPreOrden());
-                }else{
-                    textRecorridos.setText("El arbol no existe");
-                }
 
-            }
-        });
-        recorridoPostOrdenButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (arbolExiste){
-                    textRecorridos.setText("Recorrido en PostOrden: "+arbol.recorridoEnPostOrden());
-                }else{
-                    textRecorridos.setText("El arbol no existe");
-                }
-            }
-        });
-        recorridoPorNivelesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (arbolExiste){
-                    textRecorridos.setText("Recorrido por niveles: "+arbol.recorridoPorNiveles());
-                }else{
-                    textRecorridos.setText("El arbol no existe");
-                }
             }
         });
     }
@@ -213,6 +182,8 @@ public class Formulario extends JFrame {
         // Crear una instancia de la clase que extiende JFrame
         Formulario miVentana = new Formulario();
         miVentana.setResizable(false);
+
+
     }
 
     private static int mostrarVentanaEmergente() {
@@ -234,5 +205,16 @@ public class Formulario extends JFrame {
         for (int i=0;i<listaDeClaves.size();i++){
             arbol.insertar(listaDeClaves.get(i),listaDeValores.get(i));
         }
+    }
+
+    private void limpiarPizarra() {
+        pizarra.getGraphics().clearRect(0, 0, pizarra.getWidth(), pizarra.getHeight());
+    }
+
+    private void mostrarRecorridosEnInterfaz() {
+        textInOrden.setText("Recorrido en InOrden: "+ arbol.recorridoEnInOrden());
+        textPreOrden.setText("Recorrido en PreOrden: "+ arbol.recorridoEnPreOrden());
+        textPostOrden.setText("Recorrido en PostOrden: "+ arbol.recorridoEnPostOrden());
+        textNiveles.setText("Recorrido por Niveles: "+ arbol.recorridoPorNiveles());
     }
 }
