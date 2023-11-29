@@ -2,8 +2,10 @@ package bo.edu.uagrm.ficct.inf310sb.arboles.ui;
 
 import bo.edu.uagrm.ficct.inf310sb.arboles.excepciones.ClaveNoExisteExcepcion;
 
-import javax.print.attribute.standard.NumberOfDocuments;
+import bo.edu.uagrm.ficct.inf310sb.arboles.GUI.Dibujo;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         IArbolBusqueda<K,V> {
@@ -471,13 +473,6 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
         return arbol;
     }
 
-    public NodoBinario<K,V> getraiz(){
-        return raiz;
-    }
-    public NodoMVias<K,V> getraizM(){
-        return null;
-    }
-
     public int nroNodosSoloConHijoIzquierdo(){
         return nroNodosSoloConHijoIzquierdo(this.raiz);
     }
@@ -493,5 +488,37 @@ public class ArbolBinarioBusqueda<K extends Comparable<K>, V> implements
             cantidad++;
         }
         return cantidad;
+    }
+    public void dibujarArbolBinario(Graphics pizarra, int x1) {
+        if (!this.esArbolVacio()) {
+            dibujarArbolBinario(pizarra, this.raiz, x1, 30, 1);
+            // DibujarArbolBinario(pizarra, arbol, arbol.getraiz(), x1, y1, x2, y2,0);
+        }
+    }
+
+    private void dibujarArbolBinario(Graphics pizarra, NodoBinario nodoActual, int x, int y, int nivel) {
+       int dimensionNodo =40;
+        if (!NodoBinario.esNodoVacio(nodoActual)) {
+            // Calcula nuevas posiciones para los hijos
+            int espacioX = (int) (Dibujo.ESPACIO_HORIZONTAL * Math.pow(2, this.altura() - nivel));
+            int hijoIzquierdoX = x - espacioX;
+            int hijoDerechoX = x + espacioX;
+            int hijoY = y + Dibujo.ESPACIO_VERTICAL;
+
+            // Dibuja líneas hacia los hijos
+            if (!nodoActual.esVacioHijoIzquierdo()) {
+                Dibujo.hacerLinea(pizarra, x + dimensionNodo / 2, y + dimensionNodo / 2, hijoIzquierdoX + dimensionNodo / 2, hijoY);
+            }
+            if (!nodoActual.esVacioHijoDerecho()) {
+                Dibujo.hacerLinea(pizarra, x + dimensionNodo / 2, y + dimensionNodo / 2, hijoDerechoX + dimensionNodo / 2, hijoY);
+            }
+
+            Dibujo.HacerRedondo(pizarra, x, y, dimensionNodo, dimensionNodo);
+            Dibujo.hacerLlave(pizarra, nodoActual, x, y, dimensionNodo, dimensionNodo);
+
+            // Llamadas recursivas para los hijos
+            dibujarArbolBinario(pizarra, nodoActual.getHijoIzquierdo(), hijoIzquierdoX, hijoY, nivel + 1);
+            dibujarArbolBinario(pizarra, nodoActual.getHijoDerecho(), hijoDerechoX, hijoY, nivel + 1);
+        }
     }
 }

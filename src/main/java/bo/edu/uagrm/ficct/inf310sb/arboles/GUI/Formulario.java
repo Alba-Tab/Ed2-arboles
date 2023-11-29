@@ -28,6 +28,7 @@ public class Formulario extends JFrame {
     private JLabel textPreOrden;
     private JLabel textPostOrden;
     private JLabel textNiveles;
+    private JButton buscarButton;
     private JPanel pizarraClaves;
 
     public Formulario() {
@@ -57,7 +58,7 @@ public class Formulario extends JFrame {
                         List<String> listaDeValores = arbol.recorridoValoresEnPorNiveles();
                         arbol = new ArbolBinarioBusqueda<>();
                         insertar(arbol, listaDeClaves, listaDeValores);
-                        dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
+                        arbol.dibujarArbolBinario(pizarra.getGraphics(), pizarra.getWidth()/2);
                         mostrarRecorridosEnInterfaz();
                         return;
                     }
@@ -80,7 +81,7 @@ public class Formulario extends JFrame {
                         List<String> listaDeValores = arbol.recorridoValoresEnPorNiveles();
                         arbol = new AVL<>();
                         insertar(arbol, listaDeClaves, listaDeValores);
-                        dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
+                        arbol.dibujarArbolBinario(pizarra.getGraphics(), pizarra.getWidth()/2);
                         mostrarRecorridosEnInterfaz();
                         return;
                     }
@@ -135,7 +136,7 @@ public class Formulario extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 limpiarPizarra();
                 arbol.insertar(Integer.parseInt(textClave.getText()),textValor.getText() );
-                dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
+                arbol.dibujarArbolBinario(pizarra.getGraphics(), pizarra.getWidth()/2);
                 mostrarRecorridosEnInterfaz();
 
                 textClave.setText("");
@@ -146,13 +147,18 @@ public class Formulario extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 limpiarPizarra();
-                try {
-                    arbol.eliminar(Integer.parseInt(textClave.getText()));
-                    textClave.setText("");
-                } catch (ClaveNoExisteExcepcion ex) {
-                    throw new RuntimeException(ex);
+                if (arbol.buscar(Integer.parseInt(textClave.getText()))==null){
+                    textClave.setText("No existe el valor");
+                }else{
+
+                    try {
+                        arbol.eliminar(Integer.parseInt(textClave.getText()));
+                        textClave.setText("");
+                    } catch (ClaveNoExisteExcepcion ex) {
+
+                    }
                 }
-                dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
+                arbol.dibujarArbolBinario(pizarra.getGraphics(), pizarra.getWidth()/2);
                 mostrarRecorridosEnInterfaz();
             }
         });
@@ -160,19 +166,30 @@ public class Formulario extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 limpiarPizarra();
-                    arbol.insertar(77,"MM");
-                    arbol.insertar(50,"XY");
-                    arbol.insertar(90,"A8");
-                    arbol.insertar(30,"AT");
-                    arbol.insertar(62,"AM");
-                    arbol.insertar(81,"BK");
-                    arbol.insertar(42,"PP");
-                    arbol.insertar(85,"XA");
-                    arbol.insertar(76,"PP");
-                    arbol.insertar(30,"TT");
-                dibujar.dibujarArbolBinario(pizarra.getGraphics(), arbol, pizarra.getWidth()/2);
+                    arbol.insertar(77,"Albaro");
+                    arbol.insertar(50,"Brandom");
+                    arbol.insertar(90,"Nestor");
+                    arbol.insertar(30,"Ernesto");
+                    arbol.insertar(62,"Fabiana");
+                    arbol.insertar(81,"Christian");
+                    arbol.insertar(42,"Brayan");
+                    arbol.insertar(85,"Rachel");
+                    arbol.insertar(76,"Diego");
+                    arbol.insertar(87,"Mauricio");
+                arbol.dibujarArbolBinario(pizarra.getGraphics(), pizarra.getWidth()/2);
                 mostrarRecorridosEnInterfaz();
 
+
+            }
+        });
+        buscarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(arbolExiste){
+                    textValor.setText(arbol.buscar(Integer.parseInt(textClave.getText()) ));
+                }else {
+                    textValor.setText("El arbol no existe");
+                }
 
             }
         });

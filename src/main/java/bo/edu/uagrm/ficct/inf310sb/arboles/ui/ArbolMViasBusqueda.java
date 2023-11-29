@@ -114,7 +114,7 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
                         return nodoActual;
             }
             if (claveAEliminar.compareTo(claveEnTurno)<0){
-                NodoMVias<K,V> supuestoNuevoHijo = this.eliminar(nodoActual,claveAEliminar);
+                NodoMVias<K,V> supuestoNuevoHijo = this.eliminar(nodoActual.getHijo(i),claveAEliminar);
                 nodoActual.setHijo(i,supuestoNuevoHijo);
                 return nodoActual;
             }
@@ -227,7 +227,7 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
                 if (!cambiarNodoAuxiliar) {
                     nodoActual = nodoActual.getHijo(nodoActual.nroClavesNoVacias());
                 }
-            } while (NodoMVias.esNodoVacio(nodoActual));
+            } while (!NodoMVias.esNodoVacio(nodoActual));
         }
         return null;
     }
@@ -455,30 +455,20 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
         }
         return 0;
     }
-    private int cantidadNodosConHijosPar(NodoMVias<K,V> nodoActual){
-        if (NodoMVias.esNodoVacio(nodoActual)){
+    private int cantidadNodosConHijosPar(NodoMVias<K,V> nodoActual) {
+        if (NodoMVias.esNodoVacio(nodoActual)) {
             return 0;
         }
         int cantidad = 0;
-        for (int i = 0; i<= nodoActual.nroClavesNoVacias();i++){
-            cantidad+=cantidadNodosConHijosPar(nodoActual.getHijo(i));
+        for (int i = 0; i <= nodoActual.nroClavesNoVacias(); i++) {
+            cantidad += cantidadNodosConHijosPar(nodoActual.getHijo(i));
         }
-        if (nodoActual.nroClavesNoVacias() % 2 ==0 ){
-            return cantidad+1;
+        if (nodoActual.nroClavesNoVacias() % 2 == 0) {
+            return cantidad + 1;
         }
         return cantidad;
     }
 
-    public NodoBinario<K, V> getraiz(){
-        return null;
-    }
-    public NodoMVias<K,V> getraizM(){
-        return raiz;
-    }
-
-    public static int getOrdenMinimo(){
-        return ORDEN_MINIMO;
-    }
     public int nroClavesVaciasHastaElNivel(int nivel){
         return nroClavesVaciasHastaElNivel(raiz,nivel);
     }
@@ -491,5 +481,9 @@ public class ArbolMViasBusqueda <K extends Comparable<K>,V>
             nroClaves+=nroClavesVaciasHastaElNivel(nodoActual.getHijo(i),nivel-1);
         }
         return nroClaves;
+    }
+
+    public void dibujarArbolBinario(Graphics pizarra, int x1){
+
     }
 }

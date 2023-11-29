@@ -22,6 +22,5 @@ public interface IArbolBusqueda <K extends Comparable<K>, V> {
     List<K> recorridoEnPostOrden() ;
     List<K> recorridoPorNiveles() ;
     List<V> recorridoValoresEnPorNiveles();
-    NodoBinario<K,V> getraiz();
-    NodoMVias<K,V> getraizM();
+    void dibujarArbolBinario(Graphics pizarra, int x1);
 }
