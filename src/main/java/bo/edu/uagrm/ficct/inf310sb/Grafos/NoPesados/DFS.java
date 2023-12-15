@@ -27,7 +27,7 @@ public class DFS {
         Iterable<Integer> adyacentesDelVerticeEnTurno = this.unGrafo.adyacentesDelVertice(posDeVertice);
         for (Integer adyacenteEnTurno: adyacentesDelVerticeEnTurno){
             if (!this.controlMarcados.estaVerticeMarcado(adyacenteEnTurno)){
-                this.controlMarcados.marcarVertice(adyacenteEnTurno);
+                ejecutarDFS(adyacenteEnTurno);
             }
         }
     }

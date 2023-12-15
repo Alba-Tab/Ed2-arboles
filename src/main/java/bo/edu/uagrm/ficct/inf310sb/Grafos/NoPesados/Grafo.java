@@ -39,8 +39,8 @@ public class Grafo {
     public  boolean existeAdyacencia(int posDeVerticeOrigen, int posDeVerticeDestino){
         validarVertice(posDeVerticeDestino);
         validarVertice(posDeVerticeOrigen);
-        List<Integer> adyacentesDelOrigen = this.listasDeAdyacencia.get(posDeVerticeDestino);
-        return this.listasDeAdyacencia.contains(posDeVerticeDestino);
+        List<Integer> adyacentesDelOrigen = this.listasDeAdyacencia.get(posDeVerticeOrigen);
+        return this.listasDeAdyacencia.contains(adyacentesDelOrigen);
     }
 
     public void insertarArista(int posDeVerticeOrigen, int posDeVerticeDestino)throws AristaYaExisteExcepcion {
@@ -66,22 +66,81 @@ public class Grafo {
     }
 
     public void eliminarArista(int posDeVerticeOrigen,int posDeVerticeDestino) throws AristaNoExisteExcepcion{
-
+        if (!existeAdyacencia(posDeVerticeOrigen,posDeVerticeDestino)){
+            throw new AristaNoExisteExcepcion();
+        }
+        List<Integer> listaOrigen = listasDeAdyacencia.get(posDeVerticeOrigen);
+        int posEliminar = listaOrigen.indexOf(posDeVerticeOrigen);
+        listaOrigen.remove(posEliminar);
+        if (posDeVerticeOrigen!=posDeVerticeDestino){
+            List<Integer> listaDestino = listasDeAdyacencia.get(posDeVerticeDestino);
+            posEliminar =listaDestino.indexOf(posDeVerticeOrigen);
+            listaDestino.remove(posEliminar);
+        }
     }
 
     public void eliminarVertice(int posDeVertice){
-
+        this.validarVertice(posDeVertice);
+        listasDeAdyacencia.remove(posDeVertice);
+        for (List<Integer> listaAd:this.listasDeAdyacencia){
+            int posicionAEliminarDeAdyacencia = listaAd.indexOf(posDeVertice);
+            if (posicionAEliminarDeAdyacencia>=0){
+                listaAd.remove(posicionAEliminarDeAdyacencia);
+            }
+            for (int i=0;i<listaAd.size();i++){
+                int posicionAdyacente=listaAd.get(i);
+                if(posicionAdyacente>posDeVertice){
+                    listaAd.set(i,posicionAdyacente-1);
+                }
+            }
+        }
     }
 
     public int cantidadDeAristas(){
-        return 0;
+        int lazos = 0;
+        int aristas = 0;
+        for (int i =0;i<listasDeAdyacencia.size();i++){
+            List<Integer> adyacentes = listasDeAdyacencia.get(i);
+            for (Integer elemento:adyacentes){
+                if (i==elemento){
+                    lazos++;
+                } else {
+                    aristas++;
+                }
+            }
+        }
+        return lazos+(aristas/2);
     }
     public int cantidadDeVertices(){
-        return 0;
+        return listasDeAdyacencia.size();
     }
     public int gradoDelVertice(int posDeVertice){
         validarVertice(posDeVertice);
         List<Integer> adyacentesDelVerice = this.listasDeAdyacencia.get(posDeVertice);
         return adyacentesDelVerice.size();
+    }
+    public String mostraElGrafo(){
+        String s=" |0|1|2|3"+"\n";
+        int [][]matriz=new int[this.cantidadDeVertices()][this.cantidadDeVertices()];
+        for(int i=0;i<this.cantidadDeVertices();i++){
+            for(int j=0;j<this.cantidadDeVertices();j++){
+                matriz[i][j]=0;
+            }
+        }
+
+        for(int i=0;i<this.listasDeAdyacencia.size();i++){
+            List<Integer>adyacentes=listasDeAdyacencia.get(i);
+            for(Integer elemento : adyacentes){
+                matriz[i][elemento]=1;
+            }
+        }
+        for(int i=0;i<this.cantidadDeVertices();i++){
+            s=s+i+"|";
+            for(int j=0;j<this.cantidadDeVertices();j++){
+                s=s+matriz[i][j]+" ";
+            }
+            s=s+"\n";
+        }
+        return s;
     }
 }
