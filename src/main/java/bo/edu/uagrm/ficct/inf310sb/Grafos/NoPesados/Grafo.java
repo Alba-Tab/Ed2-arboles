@@ -40,7 +40,7 @@ public class Grafo {
         validarVertice(posDeVerticeDestino);
         validarVertice(posDeVerticeOrigen);
         List<Integer> adyacentesDelOrigen = this.listasDeAdyacencia.get(posDeVerticeOrigen);
-        return this.listasDeAdyacencia.contains(adyacentesDelOrigen);
+        return adyacentesDelOrigen.contains(posDeVerticeDestino);
     }
 
     public void insertarArista(int posDeVerticeOrigen, int posDeVerticeDestino)throws AristaYaExisteExcepcion {
@@ -70,7 +70,7 @@ public class Grafo {
             throw new AristaNoExisteExcepcion();
         }
         List<Integer> listaOrigen = listasDeAdyacencia.get(posDeVerticeOrigen);
-        int posEliminar = listaOrigen.indexOf(posDeVerticeOrigen);
+        int posEliminar = listaOrigen.indexOf(posDeVerticeDestino);
         listaOrigen.remove(posEliminar);
         if (posDeVerticeOrigen!=posDeVerticeDestino){
             List<Integer> listaDestino = listasDeAdyacencia.get(posDeVerticeDestino);

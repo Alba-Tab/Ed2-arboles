@@ -1,7 +1,8 @@
-package bo.edu.uagrm.ficct.inf310sb.Grafos.NoPesados;
+package bo.edu.uagrm.ficct.inf310sb.Grafos.Pesados;
 
 import bo.edu.uagrm.ficct.inf310sb.Grafos.Excepciones.AristaYaExisteExcepcion;
 import bo.edu.uagrm.ficct.inf310sb.Grafos.Excepciones.NroVerticesInvalidoExcepcion;
+import bo.edu.uagrm.ficct.inf310sb.Grafos.NoPesados.Grafo;
 import bo.edu.uagrm.ficct.inf310sb.Grafos.utileria.UtilRecorido;
 
 import java.util.ArrayList;
@@ -9,16 +10,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class BFS {
-    private final Grafo unGrafo;
+public class BFSPesado {
+    private final GrafoPesado unGrafo;
     private final UtilRecorido controlMarcados;
     private List<Integer> recorrido;
 
-    public BFS(Grafo grafoBase,int posDeVerticeDePartida){
+    public BFSPesado(GrafoPesado grafoBase,int posDeVerticeDePartida){
         grafoBase.validarVertice(posDeVerticeDePartida);
         recorrido= new ArrayList<>();
         this.unGrafo=grafoBase;
-        controlMarcados =new UtilRecorido(unGrafo.cantidadDeVertices());
+        controlMarcados =new UtilRecorido(unGrafo.cantidadVertices());
         ejecutarBFS(posDeVerticeDePartida);
     }
 
@@ -37,6 +38,7 @@ public class BFS {
                 }
             }
         }while (!colaDeVertices.isEmpty());
+
     }
 
     public List<Integer> obtenerVerticesVisitados(){
@@ -54,7 +56,7 @@ public class BFS {
 
     public ArrayList<Integer> listaNoMarcados(){
         ArrayList<Integer> lista = new ArrayList<>();
-        for (int i = 0; i<unGrafo.cantidadDeVertices();i++){
+        for (int i = 0; i<unGrafo.cantidadVertices();i++){
             if (!controlMarcados.estaVerticeMarcado(i)){
                 lista.add(i);
             }
@@ -63,7 +65,7 @@ public class BFS {
     }
     //--------------------------------------------------------------
     public int cantidadDeIslasEnUnGrafo(Grafo unGrafo){
-        BFS bfs=new BFS(unGrafo,0);
+        bo.edu.uagrm.ficct.inf310sb.Grafos.NoPesados.BFS bfs=new bo.edu.uagrm.ficct.inf310sb.Grafos.NoPesados.BFS(unGrafo,0);
 
         if(bfs.hayCaminoATodos()){
             return 1;
@@ -122,7 +124,7 @@ public class BFS {
     }
 
     public boolean hayCiclosEnGrafo() throws NroVerticesInvalidoExcepcion, AristaYaExisteExcepcion {
-        int verticeDelGrafo=this.unGrafo.cantidadDeVertices();
+        int verticeDelGrafo=this.unGrafo.cantidadVertices();
         ArrayList<Boolean>marcados=new ArrayList<>();
         ArrayList<Boolean>visitados=new ArrayList<>();
         for(int i=0;i<verticeDelGrafo;i++){

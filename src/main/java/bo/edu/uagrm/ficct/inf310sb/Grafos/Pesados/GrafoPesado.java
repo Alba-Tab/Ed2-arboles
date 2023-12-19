@@ -1,4 +1,5 @@
 package bo.edu.uagrm.ficct.inf310sb.Grafos.Pesados;
+import bo.edu.uagrm.ficct.inf310sb.Grafos.Excepciones.AristaNoExisteExcepcion;
 import bo.edu.uagrm.ficct.inf310sb.Grafos.Excepciones.AristaYaExisteExcepcion;
 import bo.edu.uagrm.ficct.inf310sb.Grafos.Excepciones.NroVerticesInvalidoExcepcion;
 import bo.edu.uagrm.ficct.inf310sb.Grafos.NoPesados.Grafo;
@@ -16,7 +17,7 @@ public class GrafoPesado {
     }
 
     public GrafoPesado(int nroVerticeInicial) throws NroVerticesInvalidoExcepcion{
-        if (verticeInicial<0){
+        if (nroVerticeInicial<0){
             throw new NroVerticesInvalidoExcepcion();
         }
         this.listaDeAdyacencia=new ArrayList<>();
@@ -75,6 +76,109 @@ public class GrafoPesado {
     public Iterable<Integer> adyacentesDelVertice(int posDelVertice){
         this.validarVertice(posDelVertice);
         List<AdyacenteConPeso> listaDeAdyacentes = listaDeAdyacencia.get(posDelVertice);
-        List
+        List<Integer> soloVertices = new ArrayList<>();
+        for (AdyacenteConPeso vertice : listaDeAdyacentes){
+            soloVertices.add(vertice.getIndiceVertice());
+        }
+
+        Iterable<Integer> iteradorDeAdyacentes = soloVertices;
+        return iteradorDeAdyacentes;
     }
+
+    public Iterable<AdyacenteConPeso> adyacentesDelVerticeConPeso(int posVertice){
+        this.validarVertice(posVertice);
+        List<AdyacenteConPeso> lista = listaDeAdyacencia.get(posVertice);
+        return lista;
+    }
+
+    public int cantidadDeAristas(){
+        int lazos = 0;
+        int aristas=0;
+        for (int i=0;i<listaDeAdyacencia.size();i++){
+            List<AdyacenteConPeso> adyacentes = listaDeAdyacencia.get(i);
+            for (AdyacenteConPeso elemento: adyacentes){
+                if(i==elemento.getIndiceVertice()){
+                    lazos++;
+                } else {
+                    aristas++;
+                }
+            }
+        }
+        return lazos+(aristas/2);
+    }
+
+    public void eliminarArista(int posOrigen, int posDestino) throws AristaNoExisteExcepcion{
+        validarVertice(posDestino);
+        validarVertice(posOrigen);
+        if(!existeAdyacencia(posOrigen,posDestino)){
+            throw new AristaNoExisteExcepcion();
+        }
+        List<AdyacenteConPeso> listaOrigen = listaDeAdyacencia.get(posOrigen);
+        AdyacenteConPeso aBorrar = new AdyacenteConPeso(posDestino,0);
+        int posEliminar = listaOrigen.indexOf(aBorrar);
+        listaOrigen.remove(posEliminar);
+        if (posOrigen!=posDestino){
+            List<AdyacenteConPeso> listaDestino= listaDeAdyacencia.get(posDestino);
+            AdyacenteConPeso aBorrar1=new AdyacenteConPeso(posOrigen,0);
+            int posAEliminar = listaDestino.indexOf(aBorrar1);
+            listaDestino.remove(posAEliminar);
+        }
+    }
+
+    public void eliminarVertice(int posVertice){
+        validarVertice(posVertice);
+        listaDeAdyacencia.remove(posVertice);
+        AdyacenteConPeso eliminar = new AdyacenteConPeso(posVertice,0);
+        for (List<AdyacenteConPeso> listaAdyacentes : listaDeAdyacencia){
+            int posicionAEliminar=listaAdyacentes.indexOf(eliminar);
+            if(posicionAEliminar>=0){
+                listaAdyacentes.remove(eliminar);
+            }
+            for (int i=0; i <listaAdyacentes.size();i++){
+                int posicionAdyacente = listaAdyacentes.get(i).getIndiceVertice();
+                if(posicionAdyacente>posicionAdyacente){
+                    AdyacenteConPeso poner = listaAdyacentes.get(i);
+                    poner.setIndiceVertice(posicionAdyacente-1);
+                    listaAdyacentes.set(i,poner);
+                }
+            }
+        }
+    }
+
+    public double peso (int verticeOrigen, int verticeDestino) throws AristaNoExisteExcepcion{
+        validarVertice(verticeDestino);
+        validarVertice(verticeOrigen);
+        if(!existeAdyacencia(verticeOrigen,verticeDestino)){
+            throw new AristaNoExisteExcepcion();
+        }
+        List<AdyacenteConPeso> lista = this.listaDeAdyacencia.get (verticeOrigen);
+        AdyacenteConPeso nodo = new AdyacenteConPeso(verticeDestino);
+        int posicion = lista.indexOf(nodo);
+        return lista.get(posicion).getPeso();
+    }
+    public String mostraElGrafo(){
+        String s=" |0|1|2|3"+"\n";
+        int [][]matriz=new int[this.cantidadVertices()][this.cantidadVertices()];
+        for(int i=0;i<this.cantidadVertices();i++){
+            for(int j=0;j<this.cantidadVertices();j++){
+                matriz[i][j]=0;
+            }
+        }
+
+        for(int i=0;i<this.listaDeAdyacencia.size();i++){
+            List<AdyacenteConPeso>adyacentes=listaDeAdyacencia.get(i);
+            for(AdyacenteConPeso elemento : adyacentes){
+                matriz[i][elemento.getIndiceVertice()]=1;
+            }
+        }
+        for(int i=0;i<this.cantidadVertices();i++){
+            s=s+i+"|";
+            for(int j=0;j<this.cantidadVertices();j++){
+                s=s+matriz[i][j]+" ";
+            }
+            s=s+"\n";
+        }
+        return s;
+    }
+
 }
